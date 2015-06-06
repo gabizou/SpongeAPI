@@ -26,6 +26,8 @@ package org.spongepowered.api.data.manipulator.tileentity;
 
 import org.spongepowered.api.block.tileentity.Sign;
 import org.spongepowered.api.data.DataManipulator;
+import org.spongepowered.api.data.value.CollectionValue;
+import org.spongepowered.api.data.value.ListValue;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Texts;
 
@@ -42,32 +44,7 @@ public interface SignData extends DataManipulator<SignData> {
      * Each valid index (usually 0-3) will contain no null elements.
      * @return The lines of text
      */
-    List<Text> getLines();
+    ListValue<Text, SignData> lines();
 
-    /**
-     * Gets the line at the given index.
-     * <p>
-     * If a valid index (usually 0-3), the returned line will not be null.
-     * @param index The index
-     * @return The line of text
-     * @throws IndexOutOfBoundsException If the index is outside of the allowed indices
-     */
-    Text getLine(int index) throws IndexOutOfBoundsException;
 
-    /**
-     * Sets the line at the given index.
-     *
-     * @param index The index to set the line at
-     * @param text The new text
-     * @return This instance, for chaining
-     * @throws IndexOutOfBoundsException If the index is outside
-     *            of the allowed indices
-     */
-    SignData setLine(int index, Text text) throws IndexOutOfBoundsException;
-
-    /**
-     * Resets all lines to being empty ({@link Texts#of()}.
-     * @return This instance, for chaining
-     */
-    SignData reset();
 }
