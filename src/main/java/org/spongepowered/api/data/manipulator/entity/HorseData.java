@@ -28,7 +28,7 @@ import org.spongepowered.api.data.DataManipulator;
 import org.spongepowered.api.data.type.HorseColor;
 import org.spongepowered.api.data.type.HorseStyle;
 import org.spongepowered.api.data.type.HorseVariant;
-import org.spongepowered.api.data.value.Value;
+import org.spongepowered.api.data.value.mutable.Value;
 import org.spongepowered.api.entity.living.animal.Horse;
 
 /**

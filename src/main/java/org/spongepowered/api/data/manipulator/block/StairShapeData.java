@@ -26,7 +26,7 @@ package org.spongepowered.api.data.manipulator.block;
 
 import org.spongepowered.api.data.DataManipulator;
 import org.spongepowered.api.data.type.StairShape;
-import org.spongepowered.api.data.value.Value;
+import org.spongepowered.api.data.value.mutable.Value;
 
 /**
  * Represents the {@link StairShape} of a stair block.

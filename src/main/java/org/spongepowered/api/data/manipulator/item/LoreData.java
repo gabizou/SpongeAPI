@@ -25,8 +25,10 @@
 package org.spongepowered.api.data.manipulator.item;
 
 import org.spongepowered.api.data.DataManipulator;
-import org.spongepowered.api.data.value.ListValue;
+import org.spongepowered.api.data.value.mutable.CollectionValue;
 import org.spongepowered.api.text.Text;
+
+import java.util.List;
 
 /**
  * Lore is a list of {@link Text}s that are displayed on an item
@@ -34,6 +36,6 @@ import org.spongepowered.api.text.Text;
  */
 public interface LoreData extends DataManipulator<LoreData> {
 
-   ListValue<Text, LoreData> lore();
+    CollectionValue<List<Text>, LoreData> lore();
 
 }

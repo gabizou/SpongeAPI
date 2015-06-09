@@ -26,8 +26,9 @@ package org.spongepowered.api.data.manipulator.item;
 
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.data.DataManipulator;
-import org.spongepowered.api.data.value.SetValue;
+import org.spongepowered.api.data.value.mutable.CollectionValue;
 
+import java.util.Set;
 
 /**
  * Represents an editable collection of {@link BlockType}s that can
@@ -42,6 +43,6 @@ import org.spongepowered.api.data.value.SetValue;
  */
 public interface BreakableData extends DataManipulator<BreakableData> {
 
-    SetValue<BlockType, BreakableData> breakable();
+    CollectionValue<Set<BlockType>, BreakableData> breakable();
 
 }

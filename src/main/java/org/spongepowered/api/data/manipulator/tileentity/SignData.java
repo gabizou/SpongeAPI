@@ -26,10 +26,8 @@ package org.spongepowered.api.data.manipulator.tileentity;
 
 import org.spongepowered.api.block.tileentity.Sign;
 import org.spongepowered.api.data.DataManipulator;
-import org.spongepowered.api.data.value.CollectionValue;
-import org.spongepowered.api.data.value.ListValue;
+import org.spongepowered.api.data.value.mutable.CollectionValue;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.Texts;
 
 import java.util.List;
 
@@ -44,7 +42,7 @@ public interface SignData extends DataManipulator<SignData> {
      * Each valid index (usually 0-3) will contain no null elements.
      * @return The lines of text
      */
-    ListValue<Text, SignData> lines();
+    CollectionValue<List<Text>, SignData> lines();
 
 
 }

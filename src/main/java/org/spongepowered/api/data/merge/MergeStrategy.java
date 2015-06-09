@@ -25,18 +25,18 @@
 package org.spongepowered.api.data.merge;
 
 import org.spongepowered.api.data.key.Key;
-import org.spongepowered.api.data.value.ValueStore;
+import org.spongepowered.api.data.value.ValueContainer;
 
 public abstract class MergeStrategy {
 
     // return true if you modified something or false if you didn't
-    public abstract <E> boolean merge(Key<E> key, ValueStore<?> from, ValueStore<?> to);
+    public abstract <E> boolean merge(Key<E> key, ValueContainer<?> from, ValueContainer<?> to);
 
     public MergeStrategy andThen(final MergeStrategy that) {
         final MergeStrategy self = this;
         return new MergeStrategy() {
             @Override
-            public <E> boolean merge(Key<E> key, ValueStore<?> from, ValueStore<?> to) {
+            public <E> boolean merge(Key<E> key, ValueContainer<?> from, ValueContainer<?> to) {
                 return self.merge(key, from, to) || that.merge(key, from, to);
             }
         };
@@ -44,14 +44,14 @@ public abstract class MergeStrategy {
 
     public static final MergeStrategy IGNORE_ALL = new MergeStrategy() {
         @Override
-        public <E> boolean merge(Key<E> key, ValueStore<?> from, ValueStore<?> to) {
+        public <E> boolean merge(Key<E> key, ValueContainer<?> from, ValueContainer<?> to) {
             return false;
         }
     };
 
     public static final MergeStrategy FORCE_NOTHING = new MergeStrategy() {
         @Override
-        public <E> boolean merge(Key<E> key, ValueStore<?> from, ValueStore<?> to) {
+        public <E> boolean merge(Key<E> key, ValueContainer<?> from, ValueContainer<?> to) {
             return true;
         }
     };

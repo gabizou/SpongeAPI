@@ -30,7 +30,7 @@ import com.flowpowered.noise.module.source.Voronoi;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
-import org.spongepowered.api.data.manipulator.block.PlantData;
+import org.spongepowered.api.data.manipulator.mutable.block.PlantData;
 import org.spongepowered.api.data.manipulator.block.ShrubData;
 import org.spongepowered.api.data.type.PlantType;
 import org.spongepowered.api.data.type.PlantTypes;

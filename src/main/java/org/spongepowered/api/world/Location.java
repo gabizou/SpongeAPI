@@ -44,8 +44,8 @@ import org.spongepowered.api.data.MemoryDataContainer;
 import org.spongepowered.api.data.Property;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.merge.MergeStrategy;
-import org.spongepowered.api.data.value.Value;
-import org.spongepowered.api.data.value.ValueStore;
+import org.spongepowered.api.data.value.BaseValue;
+import org.spongepowered.api.data.value.ValueContainer;
 import org.spongepowered.api.data.value.memory.MemoryCompositeValueStore;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.service.persistence.InvalidDataException;
@@ -662,22 +662,22 @@ public final class Location implements DataHolder {
     }
 
     @Override
-    public <T extends ValueStore<T>> Optional<T> get(Class<T> storeClass) {
+    public <T extends ValueContainer<T>> Optional<T> get(Class<T> storeClass) {
         return null;
     }
 
     @Override
-    public <T extends ValueStore<T>> T tryGet(Class<T> storeClass) throws UnsupportedOperationException {
+    public <T extends ValueContainer<T>> T tryGet(Class<T> storeClass) throws UnsupportedOperationException {
         return null;
     }
 
     @Override
-    public <T extends ValueStore<T>> T getOrElse(Class<T> storeClass, T defaultStore) {
+    public <T extends ValueContainer<T>> T getOrElse(Class<T> storeClass, T defaultStore) {
         return null;
     }
 
     @Override
-    public boolean supports(Class<? extends ValueStore<?>> storeClass) {
+    public boolean supports(Class<? extends ValueContainer<?>> storeClass) {
         return false;
     }
 
@@ -708,12 +708,12 @@ public final class Location implements DataHolder {
     }
 
     @Override
-    public <E> Optional<Value<E, DataHolder>> bind(Key<E> key) {
+    public <E> Optional<BaseValue<E, DataHolder>> bind(Key<E> key) {
         return null;
     }
 
     @Override
-    public <E> Value<E, DataHolder> tryBind(Key<E> key) {
+    public <E> BaseValue<E, DataHolder> tryBind(Key<E> key) {
         return null;
     }
 
@@ -733,27 +733,27 @@ public final class Location implements DataHolder {
     }
 
     @Override
-    public DataHolder copyTo(ValueStore<?> that) {
+    public DataHolder copyTo(ValueContainer<?> that) {
         return null;
     }
 
     @Override
-    public DataHolder copyFrom(ValueStore<?> that) {
+    public DataHolder copyFrom(ValueContainer<?> that) {
         return null;
     }
 
     @Override
-    public DataHolder copyTo(ValueStore<?> that, MergeStrategy strategy) {
+    public DataHolder copyTo(ValueContainer<?> that, MergeStrategy strategy) {
         return null;
     }
 
     @Override
-    public DataHolder copyFrom(ValueStore<?> that, MergeStrategy strategy) {
+    public DataHolder copyFrom(ValueContainer<?> that, MergeStrategy strategy) {
         return null;
     }
 
     @Override
-    public <T extends ValueStore<T>> Optional<T> copyOf() {
+    public <T extends ValueContainer<T>> Optional<T> copyOf() {
         return null;
     }
 
@@ -763,7 +763,7 @@ public final class Location implements DataHolder {
     }
 
     @Override
-    public Set<Value<?, DataHolder>> getValues() {
+    public Set<BaseValue<?, DataHolder>> getValues() {
         return null;
     }
 }

@@ -24,7 +24,7 @@
  */
 package org.spongepowered.api.data.key;
 
-import org.spongepowered.api.data.value.Value;
+import org.spongepowered.api.data.value.BaseValue;
 
-public interface UniKey<E> extends Key<Value<E, ?>> {
+public interface UniKey<E> extends Key<BaseValue<E, ?>> {
 }

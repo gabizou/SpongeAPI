@@ -26,7 +26,7 @@ package org.spongepowered.api.data.value;
 
 import java.util.Comparator;
 
-public interface BoundedValue<E, S extends ValueStore<S>> extends Value<E, S> {
+public interface BoundedValue<E, S extends ValueContainer<S>> extends BaseValue<E, S> {
 
     E getMinValue();
 

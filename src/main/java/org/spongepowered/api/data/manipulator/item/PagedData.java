@@ -25,14 +25,16 @@
 package org.spongepowered.api.data.manipulator.item;
 
 import org.spongepowered.api.data.DataManipulator;
-import org.spongepowered.api.data.value.ListValue;
+import org.spongepowered.api.data.value.mutable.CollectionValue;
 import org.spongepowered.api.text.Text;
+
+import java.util.List;
 
 /**
  * Represents an item that has pages, like a book.
  */
 public interface PagedData extends DataManipulator<PagedData> {
 
-    ListValue<Text, PagedData> pages();
+    CollectionValue<List<Text>, PagedData> pages();
 
 }

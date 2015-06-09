@@ -24,28 +24,43 @@
  */
 package org.spongepowered.api.data.key;
 
-import com.flowpowered.math.vector.Vector3d;
-import com.google.common.base.Optional;
-import org.spongepowered.api.data.DataContainer;
-import org.spongepowered.api.data.DataHolder;
-import org.spongepowered.api.data.DataManipulator;
-import org.spongepowered.api.data.Property;
 import org.spongepowered.api.data.manipulator.block.*;
-import org.spongepowered.api.data.merge.MergeStrategy;
+import org.spongepowered.api.data.manipulator.mutable.block.AttachedData;
+import org.spongepowered.api.data.manipulator.mutable.block.AxisData;
+import org.spongepowered.api.data.manipulator.mutable.block.BigMushroomData;
+import org.spongepowered.api.data.manipulator.mutable.block.BrickData;
+import org.spongepowered.api.data.manipulator.mutable.block.ComparatorData;
+import org.spongepowered.api.data.manipulator.mutable.block.ConnectedDirectionData;
+import org.spongepowered.api.data.manipulator.mutable.block.DecayableData;
+import org.spongepowered.api.data.manipulator.mutable.block.DirectionalData;
+import org.spongepowered.api.data.manipulator.mutable.block.DirtData;
+import org.spongepowered.api.data.manipulator.mutable.block.DisarmedData;
+import org.spongepowered.api.data.manipulator.mutable.block.DisguisedBlockData;
+import org.spongepowered.api.data.manipulator.mutable.block.DoublePlantData;
+import org.spongepowered.api.data.manipulator.mutable.block.DropData;
+import org.spongepowered.api.data.manipulator.mutable.block.ExtendedData;
+import org.spongepowered.api.data.manipulator.mutable.block.FilledData;
+import org.spongepowered.api.data.manipulator.mutable.block.FluidLevelData;
+import org.spongepowered.api.data.manipulator.mutable.block.GrowthData;
+import org.spongepowered.api.data.manipulator.mutable.block.HingeData;
+import org.spongepowered.api.data.manipulator.mutable.block.InWallData;
+import org.spongepowered.api.data.manipulator.mutable.block.InstrumentData;
+import org.spongepowered.api.data.manipulator.mutable.block.LayeredData;
+import org.spongepowered.api.data.manipulator.mutable.block.MoistureData;
+import org.spongepowered.api.data.manipulator.mutable.block.OccupiedData;
+import org.spongepowered.api.data.manipulator.mutable.block.OpenData;
+import org.spongepowered.api.data.manipulator.mutable.block.PistonData;
+import org.spongepowered.api.data.manipulator.mutable.block.PlantData;
+import org.spongepowered.api.data.manipulator.mutable.block.PortionData;
+import org.spongepowered.api.data.manipulator.mutable.block.PoweredData;
+import org.spongepowered.api.data.manipulator.mutable.block.PrismarineData;
+import org.spongepowered.api.data.manipulator.mutable.block.QuartzData;
 import org.spongepowered.api.data.type.*;
-import org.spongepowered.api.data.value.MapValue;
-import org.spongepowered.api.data.value.Value;
 import org.spongepowered.api.data.value.ValueStore;
-import org.spongepowered.api.entity.Entity;
-import org.spongepowered.api.entity.EntityType;
-import org.spongepowered.api.service.persistence.InvalidDataException;
+import org.spongepowered.api.data.value.mutable.MapValue;
 import org.spongepowered.api.util.Axis;
 import org.spongepowered.api.util.Direction;
-import org.spongepowered.api.util.RelativePositions;
-import org.spongepowered.api.world.Location;
-import org.spongepowered.api.world.World;
 
-import javax.annotation.Nullable;
 import java.util.*;
 
 public final class Keys {
@@ -295,12 +310,6 @@ public final class Keys {
      * @see WireAttachmentData#wireAttachment()
      */
     public static final Key<MapValue<Direction, WireAttachmentType, ?>> WIRE_ATTACHMENTS = null;
-
-    static {
-        Entity e = null;
-        Map<Direction, WireAttachmentType> justMap = e.get(WIRE_ATTACHMENTS).get();
-        MapValue<Direction, WireAttachmentType, ?> mapValue = e.bind(WIRE_ATTACHMENTS).get();
-    }
 
     /**
      * @see WireAttachmentData#wireAttachmentNorth()

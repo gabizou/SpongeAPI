@@ -24,10 +24,13 @@
  */
 package org.spongepowered.api.data.key;
 
-import org.spongepowered.api.data.value.Value;
+import org.spongepowered.api.data.DataQuery;
+import org.spongepowered.api.data.value.BaseValue;
 
-public interface Key<V extends Value<?, ?>> {
+public interface Key<V extends BaseValue<?, ?>> {
 
     Class<V> getValueClass();
+
+    DataQuery getQuery();
 
 }

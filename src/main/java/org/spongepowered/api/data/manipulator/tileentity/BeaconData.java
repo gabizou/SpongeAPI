@@ -26,7 +26,7 @@ package org.spongepowered.api.data.manipulator.tileentity;
 
 import org.spongepowered.api.block.tileentity.carrier.Beacon;
 import org.spongepowered.api.data.DataManipulator;
-import org.spongepowered.api.data.value.OptionalValue;
+import org.spongepowered.api.data.value.mutable.OptionalValue;
 import org.spongepowered.api.potion.PotionEffectType;
 
 /**

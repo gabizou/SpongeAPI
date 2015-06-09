@@ -26,7 +26,7 @@ package org.spongepowered.api.data.manipulator.tileentity;
 
 import org.spongepowered.api.block.tileentity.carrier.BrewingStand;
 import org.spongepowered.api.data.DataManipulator;
-import org.spongepowered.api.data.value.Value;
+import org.spongepowered.api.data.value.mutable.Value;
 
 /**
  * Represents the information for a {@link BrewingStand}.

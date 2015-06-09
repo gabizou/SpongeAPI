@@ -25,7 +25,7 @@
 package org.spongepowered.api.data.manipulator.block;
 
 import org.spongepowered.api.block.BlockTypes;
-import org.spongepowered.api.data.manipulator.VariantData;
+import org.spongepowered.api.data.manipulator.mutable.VariantData;
 import org.spongepowered.api.data.type.SlabType;
 
 /**

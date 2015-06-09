@@ -25,15 +25,18 @@
 package org.spongepowered.api.data.manipulator.entity;
 
 import org.spongepowered.api.data.DataManipulator;
-import org.spongepowered.api.data.value.SetValue;
+import org.spongepowered.api.data.value.mutable.CollectionValue;
 import org.spongepowered.api.item.merchant.Merchant;
 import org.spongepowered.api.item.merchant.TradeOffer;
+
+import java.util.Set;
+
 
 /**
  * Represents a list of {@link TradeOffer}s that a {@link Merchant} may use.
  */
 public interface TradeOfferData extends DataManipulator<TradeOfferData> {
 
-    SetValue<TradeOffer, TradeOfferData> tradeOffers();
+    CollectionValue<Set<TradeOffer>, TradeOfferData> tradeOffers();
 
 }

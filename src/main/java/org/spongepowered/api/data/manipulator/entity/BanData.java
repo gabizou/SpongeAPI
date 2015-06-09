@@ -25,9 +25,11 @@
 package org.spongepowered.api.data.manipulator.entity;
 
 import org.spongepowered.api.data.DataManipulator;
-import org.spongepowered.api.data.value.SetValue;
+import org.spongepowered.api.data.value.mutable.CollectionValue;
 import org.spongepowered.api.entity.player.User;
 import org.spongepowered.api.util.ban.Ban;
+
+import java.util.Set;
 
 /**
  * Represents a list of known {@link Ban}s usually applicable to
@@ -37,7 +39,7 @@ public interface BanData extends DataManipulator<BanData> {
 
     BanSet bans();
 
-    interface BanSet extends SetValue<Ban.User, BanData> {
+    interface BanSet extends CollectionValue<Set<Ban.User>, BanData> {
 
         /**
          * Adds the given ban to the owner on top of any other bans.

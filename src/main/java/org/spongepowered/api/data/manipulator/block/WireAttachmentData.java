@@ -27,7 +27,7 @@ package org.spongepowered.api.data.manipulator.block;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.DataManipulator;
 import org.spongepowered.api.data.type.WireAttachmentType;
-import org.spongepowered.api.data.value.Value;
+import org.spongepowered.api.data.value.mutable.Value;
 import org.spongepowered.api.util.Direction;
 
 import java.util.Map;

@@ -25,8 +25,10 @@
 package org.spongepowered.api.data;
 
 import com.google.common.base.Optional;
-import org.spongepowered.api.data.value.ValueStore;
+import org.spongepowered.api.data.value.ValueContainer;
 import org.spongepowered.api.util.annotation.TransformWith;
+
+import java.util.function.Function;
 
 /**
  * Represents a changelist of data that can be applied to a {@link DataHolder}.
@@ -37,71 +39,21 @@ import org.spongepowered.api.util.annotation.TransformWith;
  * and deserialized from persistence, and applied to {@link DataHolder}s with
  * respects to their {@link DataPriority}.</p>
  *
- * @param <T> The type of {@link DataManipulator} for comparisons
+ * @param <M> The type of {@link DataManipulator} for comparisons
  */
-public interface DataManipulator<T extends DataManipulator<T>> extends Comparable<T>, DataSerializable, ValueStore<T> {
+public interface DataManipulator<M extends DataManipulator<M, I>, I extends ImmutableDataManipulator<I, M>> extends Comparable<M>, DataSerializable,
+                                                                                                                    ValueContainer<M> {
 
-    /**
-     * Attempts to read data from the given {@link DataHolder} and constructs
-     * a new copy of this {@link DataManipulator} as an instance of
-     * <code>T</code>. Any data that overlaps between this and the given
-     * {@link DataHolder} will be resolved by a default
-     * {@link DataPriority#PRE_MERGE} such that the current data from this
-     * {@link DataManipulator} will be applied before the existing data from
-     * the {@link DataHolder}.
-     *
-     * <p>Any data that overlaps existing data from the {@link DataHolder} will
-     * take priority and be overwriten from the pre-existing data from the
-     * {@link DataHolder}. It is recommended that a call from
-     * {@link DataHolder#isCompatible(Class)} is checked prior to using this
-     * method on any {@link DataHolder}.</p>
-     *
-     * @param dataHolder The {@link DataHolder} to extract data
-     * @return This {@link DataManipulator} with relevant data filled from the
-     *     given {@link DataHolder}, if compatible
-     */
-    Optional<T> fill(DataHolder dataHolder);
+    Optional<M> fill(DataHolder dataHolder);
 
-    /**
-     * Attempts to read data from the given {@link DataHolder} and constructs
-     * a new copy of this {@link DataManipulator} as an instance of
-     * <code>T</code>. Any data that overlaps between this and the given
-     * {@link DataHolder} will be resolved using the given
-     * {@link DataPriority}.
-     *
-     * <p>Any data that overlaps existing data from the {@link DataHolder} will
-     * take priority and be overwriten from the pre-existing data from the
-     * {@link DataHolder}. It is recommended that a call from
-     * {@link DataHolder#isCompatible(Class)} is checked prior to using this
-     * method on any {@link DataHolder}.</p>
-     *
-     * @param dataHolder The {@link DataHolder} to extract data
-     * @param overlap The overlap resolver to decide which data to retain
-     * @return This {@link DataManipulator} with relevant data filled from the
-     *     given {@link DataHolder}, if compatible
-     */
-    Optional<T> fill(DataHolder dataHolder, DataPriority overlap);
+    Optional<M> fill(DataHolder dataHolder, Function<I, M> overlap);
 
-    /**
-     * Attempts to read the raw data from the provided {@link DataContainer}.
-     * This manipulator should be "reset" to a default state and apply all data
-     * from the given {@link DataContainer}. If data is missing from the
-     * {@link DataContainer}, {@link Optional#absent()} can be returned.
-     *
-     * @param container The container of raw data
-     * @return This {@link DataManipulator} with relevant data filled from the
-     *     given {@link DataContainer}, if compatible
-     */
-    Optional<T> from(DataContainer container);
+    Optional<M> from(DataContainer container);
 
-    /**
-     * Creates a copy of this {@link DataManipulator} and copies all data of
-     * this manipulator into the new {@link DataManipulator}. This manipulator
-     * is left unaffected.
-     *
-     * @return The new copy of this manipulator with all data copied
-     */
     @TransformWith
-    T copy();
+    @Override
+    M copy();
 
+    @TransformWith
+    I asImmutable();
 }

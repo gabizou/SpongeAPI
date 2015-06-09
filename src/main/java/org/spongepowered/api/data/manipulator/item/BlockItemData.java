@@ -26,7 +26,7 @@ package org.spongepowered.api.data.manipulator.item;
 
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.data.DataManipulator;
-import org.spongepowered.api.data.value.Value;
+import org.spongepowered.api.data.value.mutable.Value;
 
 /**
  * Represents data about a block being represented by this item data. Since

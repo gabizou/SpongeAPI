@@ -24,7 +24,7 @@
  */
 package org.spongepowered.api.entity.player;
 
-import org.spongepowered.api.data.manipulator.DisplayNameData;
+import org.spongepowered.api.data.manipulator.mutable.DisplayNameData;
 import org.spongepowered.api.data.manipulator.entity.GameModeData;
 import org.spongepowered.api.data.manipulator.entity.JoinData;
 import org.spongepowered.api.effect.Viewer;

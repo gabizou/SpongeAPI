@@ -26,7 +26,7 @@ package org.spongepowered.api.data.manipulator.entity;
 
 import com.flowpowered.math.vector.Vector3d;
 import org.spongepowered.api.data.DataManipulator;
-import org.spongepowered.api.data.value.Value;
+import org.spongepowered.api.data.value.mutable.Value;
 import org.spongepowered.api.entity.Entity;
 
 /**

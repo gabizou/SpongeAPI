@@ -25,10 +25,11 @@
 package org.spongepowered.api.data.manipulator.entity;
 
 import org.spongepowered.api.data.DataManipulator;
-import org.spongepowered.api.data.value.SetValue;
+import org.spongepowered.api.data.value.mutable.CollectionValue;
 import org.spongepowered.api.entity.living.Agent;
 import org.spongepowered.api.entity.living.Living;
 
+import java.util.Set;
 
 /**
  * Represents the current targets of an owner that is "targeting" some
@@ -36,6 +37,6 @@ import org.spongepowered.api.entity.living.Living;
  */
 public interface TargetLivingData extends DataManipulator<TargetLivingData> {
 
-    SetValue<Living, TargetLivingData> targets();
+    CollectionValue<Set<Living>, TargetLivingData> targets();
 
 }

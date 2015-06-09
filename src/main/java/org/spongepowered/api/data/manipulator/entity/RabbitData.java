@@ -24,7 +24,7 @@
  */
 package org.spongepowered.api.data.manipulator.entity;
 
-import org.spongepowered.api.data.manipulator.VariantData;
+import org.spongepowered.api.data.manipulator.mutable.VariantData;
 import org.spongepowered.api.data.type.RabbitType;
 import org.spongepowered.api.entity.living.animal.Rabbit;
 

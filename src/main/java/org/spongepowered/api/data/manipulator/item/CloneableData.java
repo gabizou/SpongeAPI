@@ -25,7 +25,7 @@
 package org.spongepowered.api.data.manipulator.item;
 
 import org.spongepowered.api.data.DataManipulator;
-import org.spongepowered.api.data.value.Value;
+import org.spongepowered.api.data.value.mutable.Value;
 
 /**
  * Represents an item that can be cloned or copied.

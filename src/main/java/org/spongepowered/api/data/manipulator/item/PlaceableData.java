@@ -26,7 +26,9 @@ package org.spongepowered.api.data.manipulator.item;
 
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.data.DataManipulator;
-import org.spongepowered.api.data.value.SetValue;
+import org.spongepowered.api.data.value.mutable.CollectionValue;
+
+import java.util.Set;
 
 /**
  * Represents an item that can restrict the placement of itself to the
@@ -38,6 +40,6 @@ import org.spongepowered.api.data.value.SetValue;
  */
 public interface PlaceableData extends DataManipulator<PlaceableData> {
 
-    SetValue<BlockType, PlaceableData> placeable();
+    CollectionValue<Set<BlockType>, PlaceableData> placeable();
 
 }

@@ -24,10 +24,28 @@
  */
 package org.spongepowered.api.data.value;
 
-public interface BaseValue<E> {
+import com.google.common.base.Optional;
+import org.spongepowered.api.data.key.Key;
 
+public interface BaseValue<E, H extends ValueContainer<H>> {
+
+    /**
+     * Gets the held value.
+     *
+     * @return The held value
+     */
     E get();
 
-    BaseValue<E> replace(E value);
+    boolean exists();
+
+    E getDefault();
+
+    Optional<E> getDirect();
+
+    BaseValue<E, H> replace(E value);
+
+    Key<BaseValue<E, ?>> getKey();
+
+    H getContainer();
 
 }

@@ -26,7 +26,7 @@ package org.spongepowered.api.data.manipulator.tileentity;
 
 
 import org.spongepowered.api.data.DataManipulator;
-import org.spongepowered.api.data.value.Value;
+import org.spongepowered.api.data.value.mutable.Value;
 
 /**
  * Represents a lock token for a {@link org.spongepowered.api.block.tileentity.TileEntity}

@@ -29,9 +29,8 @@ import org.spongepowered.api.data.DataManipulator;
 import org.spongepowered.api.data.DataSerializable;
 import org.spongepowered.api.data.type.BannerPatternShape;
 import org.spongepowered.api.data.type.DyeColor;
-import org.spongepowered.api.data.value.CollectionValue;
-import org.spongepowered.api.data.value.ListValue;
-import org.spongepowered.api.data.value.Value;
+import org.spongepowered.api.data.value.mutable.Value;
+import org.spongepowered.api.data.value.mutable.CollectionValue;
 
 import java.util.List;
 
@@ -55,7 +54,7 @@ public interface BannerData extends DataManipulator<BannerData> {
      */
     PatternList patternsList();
 
-    interface PatternList extends ListValue<PatternLayer, BannerData> {
+    interface PatternList extends CollectionValue<List<PatternLayer>, BannerData> {
 
         /**
          * Clears this banners Pattern layers leaving only the base color.
