@@ -153,8 +153,8 @@ public final class ItemStackComparators {
             if (o2 == null) {
                 return -1;
             }
-            List<DataManipulator<?>> properties = Lists.newArrayList(o2.getManipulators());
-            for (DataManipulator<?> property : o1.getManipulators()) {
+            List<DataManipulator<?, ?>> properties = Lists.newArrayList(o2.getManipulators());
+            for (DataManipulator<?, ?> property : o1.getManipulators()) {
                 if (properties.contains(property)) {
                     properties.remove(property);
                 } else {

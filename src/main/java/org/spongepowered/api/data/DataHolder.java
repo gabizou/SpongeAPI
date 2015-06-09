@@ -25,7 +25,7 @@
 package org.spongepowered.api.data;
 
 import com.google.common.base.Optional;
-import org.spongepowered.api.data.value.CompositeValueStore;
+import org.spongepowered.api.data.value.mutable.CompositeValueStore;
 import org.spongepowered.api.service.persistence.InvalidDataException;
 
 import java.util.Collection;
@@ -34,7 +34,7 @@ import java.util.Collection;
  * A data holder object allows the access of additional data on the object
  * that is not simply expressed by its basic type.
  */
-public interface DataHolder extends DataSerializable, CompositeValueStore<DataHolder> {
+public interface DataHolder extends DataSerializable, CompositeValueStore<DataHolder, DataManipulator<?, ?>> {
 
     /**
      * Gets an copied collection of all known {@link DataManipulator}s
@@ -45,7 +45,7 @@ public interface DataHolder extends DataSerializable, CompositeValueStore<DataHo
      * @return A collection of copied data manipulators belonging to this
      *     data holder
      */
-    Collection<DataManipulator<?>> getManipulators();
+    Collection<DataManipulator<?, ?>> getManipulators();
 
     /**
      * Attempts to retrieve a specific {@link Property} type of this
@@ -105,5 +105,4 @@ public interface DataHolder extends DataSerializable, CompositeValueStore<DataHo
      *     data that this holder will refuse
      */
     void setRawData(DataContainer container) throws InvalidDataException;
-
 }

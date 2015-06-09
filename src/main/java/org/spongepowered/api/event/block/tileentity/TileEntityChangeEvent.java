@@ -47,7 +47,7 @@ public interface TileEntityChangeEvent extends TileEntityEvent, CauseTracked, Ca
      * @return The data
      */
     @TransformResult
-    DataManipulator<?> getNewData();
+    DataManipulator<?, ?> getNewData();
 
     /**
      * Sets the {@link DataManipulator} that will be offered to the {@link TileEntity} after
@@ -56,5 +56,5 @@ public interface TileEntityChangeEvent extends TileEntityEvent, CauseTracked, Ca
      * @throws InvalidDataException Depending on the event, this will be thrown if the manipulator being set isn't
      * assignable from {@link TileEntityChangeEvent#getNewData()}
      */
-    void setNewData(DataManipulator<?> newData);
+    void setNewData(DataManipulator<?, ?> newData);
 }

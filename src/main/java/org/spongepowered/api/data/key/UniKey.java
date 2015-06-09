@@ -24,7 +24,13 @@
  */
 package org.spongepowered.api.data.key;
 
-import org.spongepowered.api.data.value.Value;
+import org.spongepowered.api.data.value.BaseValue;
 
-public interface UniKey<E> extends Key<Value<E, ?>> {
+/**
+ * A singular type of {@link Key} that handles a specific type of value as
+ * generified with the type {@link E}.
+ *
+ * @param <E> The type of value
+ */
+public interface UniKey<E> extends Key<BaseValue<E, ?>> {
 }

@@ -38,7 +38,7 @@ import com.google.common.base.Optional;
  *
  * @param <T> The type of {@link DataManipulator}
  */
-public interface DataManipulatorBuilder<T extends DataManipulator<T>> {
+public interface DataManipulatorBuilder<T extends DataManipulator<T, I>, I extends ImmutableDataManipulator<I, T>> {
 
     /**
      * Creates a new specific {@link DataManipulator} for consumption. There
@@ -49,6 +49,8 @@ public interface DataManipulatorBuilder<T extends DataManipulator<T>> {
      * @return The newly created data manipulator
      */
     T create();
+
+    I createImmutable();
 
     /**
      * Attempts to read data from the given {@link DataHolder} and constructs

@@ -28,6 +28,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import org.spongepowered.api.data.DataManipulator;
+import org.spongepowered.api.data.ImmutableDataManipulator;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.ItemStackBuilder;
@@ -43,7 +44,7 @@ import java.util.Random;
  */
 public class WeightedItem extends WeightedObject<ItemType> {
 
-    private ImmutableList<DataManipulator<?>> additionalProperties;
+    private ImmutableList<ImmutableDataManipulator<?, ?>> additionalProperties;
     private VariableAmount quantity;
 
     /**
@@ -68,9 +69,13 @@ public class WeightedItem extends WeightedObject<ItemType> {
      * @param weight The weight
      * @param collection The additional properties to apply to the entity
      */
-    public WeightedItem(ItemType object, VariableAmount quantity, int weight, Collection<? extends DataManipulator<?>> collection) {
+    public WeightedItem(ItemType object, VariableAmount quantity, int weight, Collection<? extends DataManipulator<?, ?>> collection) {
         super(object, weight);
-        this.additionalProperties = ImmutableList.copyOf(collection);
+        ImmutableList.Builder<ImmutableDataManipulator<?, ?>> builder = ImmutableList.builder();
+        for (DataManipulator<?, ?> property : collection) {
+            builder.add(property.asImmutable());
+        }
+        this.additionalProperties = builder.build();
         this.quantity = quantity;
     }
 
@@ -88,7 +93,7 @@ public class WeightedItem extends WeightedObject<ItemType> {
      *
      * @return The additional properties
      */
-    public List<DataManipulator<?>> getAdditionalProperties() {
+    public List<ImmutableDataManipulator<?, ?>> getAdditionalProperties() {
         return this.additionalProperties;
     }
 
@@ -101,7 +106,6 @@ public class WeightedItem extends WeightedObject<ItemType> {
      * @param maxStacks The maximum number of item stacks that may be created
      * @return The item stacks
      */
-    @SuppressWarnings({"rawtypes", "unchecked"})
     public Collection<ItemStack> getRandomItem(ItemStackBuilder builder, Random rand, int maxStacks) {
         int total = this.quantity.getFlooredAmount(rand);
         if (total <= 0) {
@@ -116,7 +120,7 @@ public class WeightedItem extends WeightedObject<ItemType> {
         for (int i = 0; i < total;) {
             int n = (i + type.getMaxStackQuantity() > total) ? total - i : type.getMaxStackQuantity();
             builder.reset().itemType(type).quantity(n);
-            for (DataManipulator data : this.additionalProperties) {
+            for (ImmutableDataManipulator<?, ?> data : this.additionalProperties) {
                 builder.itemData(data);
             }
             result.add(builder.build());

@@ -45,7 +45,9 @@ public interface DataManipulatorRegistry {
      * @param builder The builder instance of the data manipulator
      * @param <T> The type of data manipulator
      */
-    <T extends DataManipulator<T>> void register(Class<T> manipulatorClass, DataManipulatorBuilder<T> builder);
+    <T extends DataManipulator<T, I>, I extends ImmutableDataManipulator<I, T>> void register(Class<T> manipulatorClass,
+                                                                                              Class<I> immutableManipulatorClass,
+                                                                                              DataManipulatorBuilder<T, I> builder);
 
     /**
      * Attempts to retrieve the builder for the given {@link DataManipulator}.
@@ -57,6 +59,11 @@ public interface DataManipulatorRegistry {
      * @param <T> The type of manipulator
      * @return The builder, if available
      */
-    <T extends DataManipulator<T>> Optional<DataManipulatorBuilder<T>> getBuilder(Class<T> manipulatorClass);
+    <T extends DataManipulator<T, I>, I extends ImmutableDataManipulator<I, T>>
+    Optional<DataManipulatorBuilder<T, I>> getBuilder(Class<T> manipulatorClass);
+
+
+    <T extends DataManipulator<T, I>, I extends ImmutableDataManipulator<I, T>>
+    Optional<DataManipulatorBuilder<T, I>> getBuilderForImmutable(Class<I> immutableManipulatorClass);
 
 }

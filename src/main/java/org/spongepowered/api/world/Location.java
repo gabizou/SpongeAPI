@@ -40,22 +40,22 @@ import org.spongepowered.api.block.tileentity.TileEntity;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataHolder;
 import org.spongepowered.api.data.DataManipulator;
+import org.spongepowered.api.data.DataTransactionResult;
 import org.spongepowered.api.data.MemoryDataContainer;
 import org.spongepowered.api.data.Property;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.merge.MergeStrategy;
-import org.spongepowered.api.data.value.Value;
-import org.spongepowered.api.data.value.ValueStore;
-import org.spongepowered.api.data.value.memory.MemoryCompositeValueStore;
+import org.spongepowered.api.data.value.BaseValue;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.service.persistence.InvalidDataException;
 import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.world.biome.BiomeType;
 import org.spongepowered.api.world.extent.Extent;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Set;
+
+import javax.annotation.Nullable;
 
 /**
  * A position within a particular {@link Extent}.
@@ -622,8 +622,9 @@ public final class Location implements DataHolder {
         getExtent().removeScheduledUpdate(getBlockPosition(), update);
     }
 
+
     @Override
-    public Collection<DataManipulator<?>> getManipulators() {
+    public Collection<DataManipulator<?, ?>> getManipulators() {
         return getExtent().getManipulators(getBlockPosition());
     }
 
@@ -661,59 +662,25 @@ public final class Location implements DataHolder {
         return container;
     }
 
-    @Override
-    public <T extends ValueStore<T>> Optional<T> get(Class<T> storeClass) {
-        return null;
-    }
 
     @Override
-    public <T extends ValueStore<T>> T tryGet(Class<T> storeClass) throws UnsupportedOperationException {
-        return null;
-    }
-
-    @Override
-    public <T extends ValueStore<T>> T getOrElse(Class<T> storeClass, T defaultStore) {
-        return null;
-    }
-
-    @Override
-    public boolean supports(Class<? extends ValueStore<?>> storeClass) {
-        return false;
-    }
-
-    @Override
-    public <E> Optional<E> get(Key<E> key) {
-        return null;
-    }
-
-    @Override
-    public <E> E tryGet(Key<E> key) throws UnsupportedOperationException {
+    public <E> Optional<E> get(Key<? extends BaseValue<E, ?>> key) {
         return null;
     }
 
     @Nullable
     @Override
-    public <E> E getOrNull(Key<E> key) {
+    public <E> E getOrNull(Key<? extends BaseValue<E, ?>> key) {
         return null;
     }
 
     @Override
-    public <E> E getOrElse(Key<E> key, E defaultValue) {
+    public <E> E getOrElse(Key<? extends BaseValue<E, ?>> key, E defaultValue) {
         return null;
     }
 
     @Override
-    public <E> DataHolder set(Key<E> key, E value) {
-        return null;
-    }
-
-    @Override
-    public <E> Optional<Value<E, DataHolder>> bind(Key<E> key) {
-        return null;
-    }
-
-    @Override
-    public <E> Value<E, DataHolder> tryBind(Key<E> key) {
+    public <E, V extends BaseValue<E, ?>> Optional<V> getValue(Key<V> key) {
         return null;
     }
 
@@ -723,39 +690,10 @@ public final class Location implements DataHolder {
     }
 
     @Override
-    public boolean canMutate() {
-        return false;
-    }
-
-    @Override
     public DataHolder copy() {
         return null;
     }
 
-    @Override
-    public DataHolder copyTo(ValueStore<?> that) {
-        return null;
-    }
-
-    @Override
-    public DataHolder copyFrom(ValueStore<?> that) {
-        return null;
-    }
-
-    @Override
-    public DataHolder copyTo(ValueStore<?> that, MergeStrategy strategy) {
-        return null;
-    }
-
-    @Override
-    public DataHolder copyFrom(ValueStore<?> that, MergeStrategy strategy) {
-        return null;
-    }
-
-    @Override
-    public <T extends ValueStore<T>> Optional<T> copyOf() {
-        return null;
-    }
 
     @Override
     public Set<Key<?>> getKeys() {
@@ -763,7 +701,88 @@ public final class Location implements DataHolder {
     }
 
     @Override
-    public Set<Value<?, DataHolder>> getValues() {
+    public Set<BaseValue<?, DataHolder>> getValues() {
+        return null;
+    }
+
+    @Override
+    public <T extends DataManipulator<?, ?>> Optional<T> get(Class<T> containerClass) {
+        return null;
+    }
+
+    @Override
+    public <T extends DataManipulator<?, ?>> Optional<T> getOrCreate(Class<T> containerClass) {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public <T extends DataManipulator<?, ?>> T getOrNull(Class<T> containerClass) {
+        return null;
+    }
+
+    @Override
+    public <T extends DataManipulator<?, ?>> T getOrCreateNull(Class<T> containerClass) {
+        return null;
+    }
+
+    @Override
+    public <T extends DataManipulator<?, ?>> T getOrElse(Class<T> containerClass, T defaultHolder) {
+        return null;
+    }
+
+    @Override
+    public <E> DataTransactionResult offer(Key<? extends BaseValue<E, ?>> key, E value) {
+        return null;
+    }
+
+    @Override
+    public boolean supports(Class<? extends DataManipulator<?, ?>> containerClass) {
+        return false;
+    }
+
+    @Override
+    public DataTransactionResult offer(DataManipulator<?, ?>... valueContainers) {
+        return null;
+    }
+
+    @Override
+    public DataTransactionResult offer(Iterable<DataManipulator<?, ?>> valueContainers) {
+        return null;
+    }
+
+    @Override
+    public DataTransactionResult remove(DataManipulator<?, ?>... valueContainers) {
+        return null;
+    }
+
+    @Override
+    public DataTransactionResult remove(Iterable<DataManipulator<?, ?>> valueContainers) {
+        return null;
+    }
+
+    @Override
+    public DataTransactionResult undo(DataTransactionResult result) {
+        return null;
+    }
+
+    @Override
+    public DataTransactionResult copyTo(DataHolder that) {
+        return null;
+    }
+
+    @Override
+    public DataTransactionResult copyTo(DataHolder that, MergeStrategy strategy) {
+        return null;
+    }
+
+    @Override
+    public DataTransactionResult copyFrom(DataHolder that) {
+        return null;
+    }
+
+    @Override
+    public DataTransactionResult copyFrom(DataHolder that, MergeStrategy strategy) {
         return null;
     }
 }

@@ -93,9 +93,11 @@ public interface TileEntity extends DataHolder, DataSerializable {
     Location getBlock();
 
     /**
-     * Gets a copy of the underlying data of this {@link TileEntity} or {@link Optional#absent()} if none available.
-     * @return The data
+     * Gets a copy of the underlying data of this {@link TileEntity} or
+     * {@link Optional#absent()} if none available.
+     *
+     * @return The data, if available
      */
-    Optional<? extends DataManipulator<?>> getData();
+    Optional<? extends DataManipulator<?, ?>> getData();
 
 }

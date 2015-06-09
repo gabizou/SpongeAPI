@@ -26,6 +26,7 @@ package org.spongepowered.api.event.block.tileentity;
 
 import org.spongepowered.api.block.tileentity.TileEntity;
 import org.spongepowered.api.data.DataManipulator;
+import org.spongepowered.api.data.ImmutableDataManipulator;
 import org.spongepowered.api.event.GameEvent;
 import org.spongepowered.api.util.annotation.TransformResult;
 
@@ -47,6 +48,5 @@ public interface TileEntityEvent extends GameEvent {
      *
      * @return The snapshot of the current tile entity data
      */
-    @TransformResult
-    DataManipulator<?> getCurrentData();
+    ImmutableDataManipulator<?, ?> getCurrentData();
 }

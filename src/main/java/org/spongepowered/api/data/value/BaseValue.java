@@ -24,10 +24,42 @@
  */
 package org.spongepowered.api.data.value;
 
-public interface BaseValue<E> {
+import com.google.common.base.Optional;
+import org.spongepowered.api.data.key.Key;
 
+/**
+ * Represents a wrapped value of type {@link E}. The wrapper is meant for
+ *
+ * @param <E>
+ * @param <H>
+ */
+public interface BaseValue<E, H extends ValueContainer<H>> {
+
+    /**
+     * Gets the held value.
+     *
+     * @return The held value
+     */
     E get();
 
-    BaseValue<E> replace(E value);
+    /**
+     * Checks that the underlying value exists (or "set").
+     *
+     * @return True if the value exists or was set
+     */
+    boolean exists();
+
+    /**
+     * Gets the default value if there is one.
+     *
+     * @return The default value
+     */
+    E getDefault();
+
+    Optional<E> getDirect();
+
+    Key<BaseValue<E, ?>> getKey();
+
+    H getContainer();
 
 }

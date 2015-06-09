@@ -45,7 +45,9 @@ public interface ImmutableDataBuilder<H extends ImmutableDataHolder<H>, E extend
      * @param <M> The maipulator type
      * @return This builder, for chaining
      */
-    <M extends DataManipulator<M>> E add(M manipulator);
+    <M extends DataManipulator<M, ?>> E add(M manipulator);
+
+    <I extends ImmutableDataManipulator<I, ?>> E add(I manipulator);
 
     /**
      * Copies all known {@link DataManipulator}s from the given

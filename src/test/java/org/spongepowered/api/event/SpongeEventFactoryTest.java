@@ -167,7 +167,7 @@ public class SpongeEventFactoryTest {
             when(mock.copy()).thenAnswer(answer);
             return mock;
         } else if (DataManipulator.class.isAssignableFrom(paramType)) {
-            DataManipulator<?> mock = (DataManipulator) mock(paramType);
+            DataManipulator<?, ?> mock = (DataManipulator) mock(paramType);
 
             final Answer<Object> answer = new Answer<Object>() {
                 @Override

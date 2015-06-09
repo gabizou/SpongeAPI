@@ -30,8 +30,8 @@ import com.flowpowered.noise.module.source.Voronoi;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
-import org.spongepowered.api.data.manipulator.block.PlantData;
-import org.spongepowered.api.data.manipulator.block.ShrubData;
+import org.spongepowered.api.data.manipulator.immutable.block.ImmutablePlantData;
+import org.spongepowered.api.data.manipulator.immutable.block.ImmutableShrubData;
 import org.spongepowered.api.data.type.PlantType;
 import org.spongepowered.api.data.type.PlantTypes;
 import org.spongepowered.api.data.type.ShrubTypes;
@@ -73,7 +73,7 @@ public class SkylandsGrassPopulator implements GeneratorPopulator {
         //noinspection ConstantConditions
         final BlockState defaultGrass = BlockTypes.TALLGRASS.getDefaultState();
         //noinspection ConstantConditions
-        TALL_GRASS = defaultGrass.withData(defaultGrass.getManipulator(ShrubData.class).get().type().set(ShrubTypes.TALL_GRASS)).get();
+        TALL_GRASS = defaultGrass.with(defaultGrass.get(ImmutableShrubData.class).get().type().with(ShrubTypes.TALL_GRASS)).get();
     }
 
     /**
@@ -172,7 +172,7 @@ public class SkylandsGrassPopulator implements GeneratorPopulator {
         private final BlockState upperBlock;
 
         private Flower(PlantType type) {
-            this(DEFAULT_FLOWER.withData(DEFAULT_FLOWER.getManipulator(PlantData.class).get().type().set(type)).get(), false);
+            this(DEFAULT_FLOWER.with(DEFAULT_FLOWER.get(ImmutablePlantData.class).get().type().with(type)).get(), false);
         }
 
         private Flower(BlockType block) {

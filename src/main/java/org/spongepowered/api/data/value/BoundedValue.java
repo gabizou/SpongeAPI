@@ -24,16 +24,27 @@
  */
 package org.spongepowered.api.data.value;
 
+import org.spongepowered.api.data.DataHolder;
+
 import java.util.Comparator;
 
-public interface BoundedValue<E, S extends ValueStore<S>> extends Value<E, S> {
+/**
+ * Represents a value that may itself be {@link Comparable} or can be
+ * compared using the {@link Comparator} such that the value is "bounded" by a
+ * {@link #getMinValue()} and a {@link #getMaxValue()}. For a majority of
+ * values, a {@link BoundedValue} is limited to being within it's destined
+ * bounds. Any {@link BoundedValue} that is out of it's intended bounds will
+ * throw an {@link IllegalStateException} if used or offered to a
+ * {@link ValueContainer} or {@link DataHolder}.
+ *
+ * @param <E> The type of value that can be compared
+ * @param <S> The owning {@link ValueContainer}
+ */
+public interface BoundedValue<E, S extends ValueContainer<S>> extends BaseValue<E, S> {
 
     E getMinValue();
 
     E getMaxValue();
-
-    @Override
-    BoundedValue<E, S> replace(E value);
 
     Comparator<E> getComparator();
 
