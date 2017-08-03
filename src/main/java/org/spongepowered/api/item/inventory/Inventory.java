@@ -28,8 +28,10 @@ import org.spongepowered.api.Nameable;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.item.inventory.InteractInventoryEvent;
 import org.spongepowered.api.item.ItemType;
+import org.spongepowered.api.item.inventory.property.InventoryTitle;
 import org.spongepowered.api.item.inventory.transaction.InventoryTransactionResult;
 import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.translation.Translation;
 import org.spongepowered.api.util.ResettableBuilder;
 
@@ -497,6 +499,16 @@ public interface Inventory extends Iterable<Inventory>, Nameable {
          */
         // TODO only properties declared in the archetype are allowed? IllegalArgumentException?
         Builder property(String name, InventoryProperty<?, ?> property);
+
+        /**
+         * Sets the {@link InventoryTitle Title} for the Inventory.
+         *
+         * @param title The text title
+         * @return This builder, for chaining
+         */
+        default Builder title(Text title) {
+            return property(InventoryTitle.PROPERTY_NAME, new InventoryTitle(title));
+        }
 
         /**
          * Sets the {@link Carrier} that carries the Inventory.

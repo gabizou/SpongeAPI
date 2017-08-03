@@ -63,8 +63,7 @@ public class ChanceTable<T> extends RandomObjectTable<T> {
         }
         int rolls = getRolls().getFlooredAmount(rand);
         for (int i = 0; i < rolls; i++) {
-            for (Iterator<TableEntry<T>> it = this.entries.iterator(); it.hasNext();) {
-                TableEntry<T> next = it.next();
+            for (TableEntry<T> next : this.entries) {
                 if (rand.nextDouble() < next.getWeight()) {
                     if (next instanceof NestedTableEntry) {
                         results.addAll(((NestedTableEntry<T>) next).get(rand));

@@ -166,8 +166,7 @@ public class WeightedTable<T> extends RandomObjectTable<T> {
         int rolls = getRolls().getFlooredAmount(rand);
         for (int i = 0; i < rolls; i++) {
             double roll = rand.nextDouble() * this.totalWeight;
-            for (Iterator<TableEntry<T>> it = this.entries.iterator(); it.hasNext();) {
-                TableEntry<T> next = it.next();
+            for (TableEntry<T> next : this.entries) {
                 roll -= next.getWeight();
                 if (roll <= 0) {
                     if (next instanceof NestedTableEntry) {
