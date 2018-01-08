@@ -30,6 +30,7 @@ import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializer;
 import org.spongepowered.api.GameRegistry;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.text.format.SpongeTextStyleBase;
 import org.spongepowered.api.text.format.TextColor;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextFormat;
@@ -56,7 +57,7 @@ public class TextFormatConfigSerializer implements TypeSerializer<TextFormat> {
 
         TextStyle style = TextStyles.NONE;
         ConfigurationNode styleNode = value.getNode(NODE_STYLE);
-        for (TextStyle.Base component : registry.getAllOf(TextStyle.Base.class)) {
+        for (SpongeTextStyleBase component : registry.getAllOf(SpongeTextStyleBase.class)) {
             if (styleNode.getNode(component.getId().toLowerCase()).getBoolean()) {
                 style = style.and(component);
             }
@@ -70,7 +71,7 @@ public class TextFormatConfigSerializer implements TypeSerializer<TextFormat> {
         value.getNode(NODE_COLOR).setValue(obj.getColor().getId());
         ConfigurationNode styleNode = value.getNode(NODE_STYLE);
         TextStyle composite = obj.getStyle();
-        Sponge.getRegistry().getAllOf(TextStyle.Base.class)
+        Sponge.getRegistry().getAllOf(SpongeTextStyleBase.class)
                 .forEach(style -> styleNode.getNode(style.getId().toLowerCase()).setValue(composite.contains(style)));
     }
 
