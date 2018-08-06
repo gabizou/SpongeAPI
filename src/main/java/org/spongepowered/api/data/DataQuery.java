@@ -27,8 +27,10 @@ package org.spongepowered.api.data;
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
+import org.spongepowered.api.util.Coerce;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 /**
@@ -37,27 +39,26 @@ import java.util.regex.Pattern;
  */
 public final class DataQuery {
 
-    private static final DataQuery EMPTY = new DataQuery();
+    private static final DataQuery EMPTY = new DataQuery(ImmutableList.of(), ImmutableList.of());
 
     /**
      * The parts that make up this query.
      */
-    private final ImmutableList<String> parts;
+    private final ImmutableList<Object> parts;
+    private final ImmutableList<QueryTypes> partTypes;
 
     private ImmutableList<DataQuery> queryParts; //lazy loaded
 
-    /**
-     * Constructs a query using the given separator character and path.
-     *
-     * <p>As an example, {@code new DataQuery('/', "a/b/c")} and
-     * {@code new DataQuery('.', "a.b.c")} represent the same path but are
-     * constructed using different separators.</p>
-     *
-     * @param separator The separator
-     * @param path The path
-     */
-    private DataQuery(char separator, String path) {
-        this(path.split(Pattern.quote(String.valueOf(separator))));
+    private static enum QueryTypes {
+        STRING() {
+
+        },
+        INT() {
+
+        }
+        ;
+
+
     }
 
     /**
@@ -65,17 +66,10 @@ public final class DataQuery {
      *
      * @param parts The parts
      */
-    private DataQuery(String... parts) {
-        this.parts = ImmutableList.copyOf(parts);
-    }
-
-    /**
-     * Constructs a query using the given parts.
-     *
-     * @param parts The parts
-     */
-    private DataQuery(List<String> parts) {
-        this.parts = ImmutableList.copyOf(parts);
+    private DataQuery(ImmutableList<Object> parts, ImmutableList<QueryTypes> types) {
+        // We don't throw exceptions in constructors, we throw them before we get here.
+        this.partTypes = types;
+        this.parts = parts;
     }
 
     /**
@@ -101,7 +95,13 @@ public final class DataQuery {
      * @return The newly constructed {@link DataQuery}
      */
     public static DataQuery of(char separator, String path) {
-        return new DataQuery(separator, path);
+        final String[] split = path.split(Pattern.quote(String.valueOf(separator)));
+        final ImmutableList<Object> parts = ImmutableList.copyOf(split);
+        final ImmutableList.Builder<QueryTypes> builder = ImmutableList.builder();
+        for (int i = 0; i < parts.size(); i++) {
+            builder.add(QueryTypes.STRING);
+        }
+        return new DataQuery(parts, builder.build());
     }
 
     /**
@@ -110,11 +110,25 @@ public final class DataQuery {
      * @param parts The parts
      * @return The newly constructed {@link DataQuery}
      */
-    public static DataQuery of(String... parts) {
+    public static DataQuery of(Object... parts) {
         if (parts.length == 0) {
             return DataQuery.EMPTY;
         }
-        return new DataQuery(parts);
+        final ImmutableList.Builder<Object> partBuilder = ImmutableList.builder();
+        final ImmutableList.Builder<QueryTypes> typeBuilder = ImmutableList.builder();
+        for (Object part : parts) {
+            partBuilder.add(part);
+            if (part.getClass().equals(String.class)) {
+                typeBuilder.add(QueryTypes.STRING);
+                continue;
+            }
+            final Optional<Integer> integer = Coerce.asInteger(part);
+            if (!integer.isPresent()) {
+                throw new IllegalArgumentException("Object submitted for a query is neither a String or an Integer! Found: " + part);
+            }
+            typeBuilder.add(QueryTypes.INT);
+        }
+        return new DataQuery(partBuilder.build(), typeBuilder.build());
     }
 
     /**
@@ -127,7 +141,21 @@ public final class DataQuery {
         if (parts.isEmpty()) {
             return DataQuery.EMPTY;
         }
-        return new DataQuery(parts);
+        final ImmutableList.Builder<Object> partBuilder = ImmutableList.builder();
+        final ImmutableList.Builder<QueryTypes> typeBuilder = ImmutableList.builder();
+        for (Object part : parts) {
+            partBuilder.add(part);
+            if (part.getClass().equals(String.class)) {
+                typeBuilder.add(QueryTypes.STRING);
+                continue;
+            }
+            final Optional<Integer> integer = Coerce.asInteger(part);
+            if (!integer.isPresent()) {
+                throw new IllegalArgumentException("Object submitted for a query is neither a String or an Integer! Found: " + part);
+            }
+            typeBuilder.add(QueryTypes.INT);
+        }
+        return new DataQuery(partBuilder.build(), typeBuilder.build());
     }
 
     /**
@@ -135,7 +163,7 @@ public final class DataQuery {
      *
      * @return The parts of this query
      */
-    public List<String> getParts() {
+    public List<Object> getParts() {
         return this.parts;
     }
 
@@ -147,13 +175,16 @@ public final class DataQuery {
      * @return The constructed query
      */
     public DataQuery then(DataQuery that) {
-        ImmutableList.Builder<String> builder =
+        ImmutableList.Builder<Object> builder =
             new ImmutableList.Builder<>();
 
         builder.addAll(this.parts);
         builder.addAll(that.parts);
+        ImmutableList.Builder<QueryTypes> types = ImmutableList.builder();
+        types.addAll(this.partTypes);
+        types.addAll(that.partTypes);
 
-        return new DataQuery(builder.build());
+        return new DataQuery(builder.build(), types.build());
     }
 
     /**
@@ -164,13 +195,16 @@ public final class DataQuery {
      * @return The constructed query
      */
     public DataQuery then(String that) {
-        ImmutableList.Builder<String> builder =
+        ImmutableList.Builder<Object> builder =
             new ImmutableList.Builder<>();
 
         builder.addAll(this.parts);
         builder.add(that);
+        ImmutableList.Builder<QueryTypes> types = ImmutableList.builder();
+        types.addAll(this.partTypes);
+        types.add(QueryTypes.STRING);
 
-        return new DataQuery(builder.build());
+        return new DataQuery(builder.build(), types.build());
     }
 
     /**
@@ -182,8 +216,8 @@ public final class DataQuery {
     public List<DataQuery> getQueryParts() {
         if (this.queryParts == null) {
             ImmutableList.Builder<DataQuery> builder = ImmutableList.builder();
-            for (String part : getParts()) {
-                builder.add(new DataQuery(part));
+            for (int i = 0; i < this.parts.size(); i++) {
+                builder.add(new DataQuery(ImmutableList.of(this.parts.get(i)), ImmutableList.of(this.partTypes.get(i))));
             }
             this.queryParts = builder.build();
         }
@@ -201,11 +235,13 @@ public final class DataQuery {
         if (this.parts.size() <= 1) {
             return of();
         }
-        ImmutableList.Builder<String> builder = ImmutableList.builder();
+        ImmutableList.Builder<Object> builder = ImmutableList.builder();
+        ImmutableList.Builder<QueryTypes> types = ImmutableList.builder();
         for (int i = 0; i < this.parts.size() - 1; i++) {
             builder.add(this.parts.get(i));
+            types.add(this.partTypes.get(i));
         }
-        return new DataQuery(builder.build());
+        return new DataQuery(builder.build(), types.build());
     }
 
     /**
@@ -219,11 +255,13 @@ public final class DataQuery {
         if (this.parts.size() <= 1) {
             return of();
         }
-        ImmutableList.Builder<String> builder = ImmutableList.builder();
+        ImmutableList.Builder<Object> builder = ImmutableList.builder();
+        ImmutableList.Builder<QueryTypes> types = ImmutableList.builder();
         for (int i = 1; i < this.parts.size(); i++) {
             builder.add(this.parts.get(i));
+            types.add(this.partTypes.get(i));
         }
-        return new DataQuery(builder.build());
+        return new DataQuery(builder.build(), types.build());
     }
 
     /**
@@ -236,7 +274,7 @@ public final class DataQuery {
         if (this.parts.size() <= 1) {
             return this;
         }
-        return new DataQuery(this.parts.get(this.parts.size() - 1));
+        return new DataQuery(ImmutableList.of(this.parts.get(this.parts.size() - 1)), ImmutableList.of(this.partTypes.get(this.partTypes.size() - 1)));
     }
 
     /**

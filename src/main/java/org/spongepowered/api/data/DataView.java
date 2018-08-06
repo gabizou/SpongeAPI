@@ -33,10 +33,12 @@ import org.spongepowered.api.data.persistence.DataTranslator;
 import org.spongepowered.api.data.value.BaseValue;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * Represents an object of data represented by a map.
@@ -92,18 +94,12 @@ public interface DataView {
 
     /**
      * Gets a collection containing all keys in this {@link DataView}.
-     *
-     * <p>If deep is set to true, then this will contain all the keys
-     * within any child {@link DataView}s (and their children, etc).
-     * These will be in a valid path notation for you to use.</p>
-     *
      * <p>If deep is set to false, then this will contain only the keys
      * of any direct children, and not their own children.</p>
      *
-     * @param deep Whether or not to get all children keys
      * @return A set of current keys in this container
      */
-    Set<DataQuery> getKeys(boolean deep);
+    Set<DataQuery> getKeys();
 
     /**
      * Gets a Map containing all keys and their values for this {@link DataView}.
@@ -181,7 +177,27 @@ public interface DataView {
 
     /**
      * Sets the given Object value according to the given path relative to
-     * this {@link DataView}'s path.
+     * this {@link DataView}'s path. As long as the object being provided
+     * satisfies one of the conditions:
+     * <ul>
+     *     <li>Is a {@link CatalogType}</li>
+     *     <li>Is a {@link DataSerializable}</li>
+     *     <li>Is a {@link Number} convertible to the smallest primitive number type</li>
+     *     <li>Is a {@link String}</li>
+     *     <li>Has a {@link DataTranslator} registered for it's type (like {@link UUID})</li>
+     *     <li>Is a finite {@link Collection} of any of the above, such that
+     *     the elements themselves are accepted by this method</li>
+     *     <li>Is itself a {@link DataView}, in which the submitted view will
+     *     be parented by this view, and have it's {@link DataQuery DataQueries}
+     *     altered to respect the new path</li>
+     *     <li>Is an array of any of the above, as arrays are treated like
+     *     {@link List}s, and therefor will be deserialized as such.</li>
+     * </ul>
+     *
+     * <p>If the offered value does <b>NOT</b> satisfy any of the requirements
+     * above, this method will throw an {@link IllegalArgumentException}, as
+     * the object is likely to be left in memory and will not be supported to
+     * create serialize in other formats.</p>
      *
      * @param path The path of the object to set
      * @param value The value of the data

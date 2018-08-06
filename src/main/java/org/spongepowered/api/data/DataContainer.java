@@ -28,6 +28,8 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.value.BaseValue;
 
+import java.util.Set;
+
 /**
  * Represents a data structure that contains data. A DataContainer is
  * an object that can be considered a root {@link DataView}.
@@ -66,4 +68,5 @@ public interface DataContainer extends DataView {
 
     @Override
     DataContainer remove(DataQuery path);
+    Set<DataQuery> getKeys(boolean deep);
 }
