@@ -17,13 +17,10 @@ buildscript {
         classpath("gradle.plugin.org.spongepowered:spongegradle:0.8.1")
         classpath("gradle.plugin.org.spongepowered:event-impl-gen:5.0.2")
     }
-    val url :String by project.properties
-    extra["url"] = url
-    val organization :String by project.properties
-    extra["organization"] = organization
-    val name :String by project.properties
-    extra["name"] = name
 }
+
+val api: Project by extra
+
 apply {
     plugin("java")
     plugin("eclipse")
@@ -44,6 +41,7 @@ group = "org.spongepowered"
 // nor can we depend on java since this is to configure all projects.
 configure<ExtraPropertiesExtension> {
     if (convention is JavaPluginConvention) {
+        // we don't know if we're a java project yet.
         (convention as JavaPluginConvention).sourceCompatibility = JavaVersion.VERSION_1_8
         (convention as JavaPluginConvention).targetCompatibility = JavaVersion.VERSION_1_8
     }
@@ -78,7 +76,6 @@ configure<IdeaModel> {
         inheritOutputDirs = true
     }
 }
-val api: Project by extra
 
 tasks.withType<Jar> {
     manifest {
@@ -138,4 +135,43 @@ configure<LicenseExtension> {
     header = api.file("HEADER.txt")
     include("**/*.java")
     newLine = false
+    val url :String by project.properties
+    val organization :String by project.properties
+    val name :String by project.properties
+    if (this is ExtensionAware) { // By default, extensions that are being configured are not according to kotlin-dsl
+        val extensionCon: ExtraPropertiesExtension = (this as ExtensionAware).extra
+        extensionCon.set("url", url)
+        extensionCon.set("organization", organization)
+        extensionCon.set("name", name)
+    }
+
+}
+
+tasks.getByName<ProcessResources>("processResources") {
+    from("LICENSE.txt")
+}
+
+configure<CheckstyleExtension> {
+    toolVersion = "8.7"
+    configFile = api.file("checkstyle.xml")
+    configProperties = mapOf(
+        "basedir" to project.projectDir,
+        "suppressions" to project.file("checkstyle-suppressions.xml"),
+        "severity" to "warning"
+    )
+}
+
+// Disable checkstyle by default (won't run unless 'checkstyle' is explicitly invoked)
+val checkstyleTask = task("checkstyle") {
+    dependsOn(tasks.withType<Checkstyle>())
+}
+
+gradle.taskGraph.whenReady {
+    if (!allTasks.contains(checkstyleTask)) {
+        allTasks.filter { it.name.startsWith("checkstyle") }.forEach { it.enabled = false }
+    }
+}
+
+task<Wrapper>("wrapper") {
+    gradleVersion = api.gradle.gradleVersion
 }
