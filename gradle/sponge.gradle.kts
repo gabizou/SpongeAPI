@@ -1,6 +1,4 @@
 // Shared Gradle configuration for the Sponge projects
-import net.minecrell.gradle.licenser.LicenseExtension
-import net.minecrell.gradle.licenser.Licenser
 import org.apache.tools.ant.taskdefs.optional.extension.Specification
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
@@ -9,13 +7,12 @@ import org.gradle.plugins.ide.idea.model.IdeaModel
 buildscript {
     repositories {
         maven(url ="https://plugins.gradle.org/m2")
+        maven("https://repo.spongepowered.org/maven")
     }
 
     dependencies {
-        classpath("gradle.plugin.net.minecrell:licenser:0.3")
         classpath("com.github.jengelman.gradle.plugins:shadow:1.2.4")
-        classpath("gradle.plugin.org.spongepowered:spongegradle:0.8.1")
-        classpath("gradle.plugin.org.spongepowered:event-impl-gen:5.0.2")
+        classpath("org.spongepowered:event-impl-gen:5.0.2")
     }
 }
 
@@ -25,9 +22,7 @@ apply {
     plugin("java")
     plugin("eclipse")
     plugin("idea")
-    plugin("org.spongepowered.gradle")
-    from("gradle/deploy.gradle.kts")
-    plugin("net.minecrell.licenser")
+    from(api.file("gradle/deploy.gradle.kts"))
     plugin("checkstyle")
 }
 
@@ -92,8 +87,8 @@ tasks.withType<Jar> {
 
 afterEvaluate {
     tasks.getByName<Jar>("jar") {
-        val commit: String? = api.extra["commit"] as? String
-        val branch: String? = api.extra["branch"] as? String
+        val commit: String? = if (extra.has("commit")) extra["commit"] as String? else null
+        val branch: String? = if (extra.has("branch")) extra["branch"] as String? else null
         commit?.let { manifest { attributes(mapOf("Git-Commit" to commit)) } }
         branch?.let { manifest { attributes(mapOf("Git-Branch" to branch)) } }
     }
@@ -131,25 +126,6 @@ task<Jar>("javadocJar") {
     from(javadoc.destinationDir)
 }
 
-configure<LicenseExtension> {
-    header = api.file("HEADER.txt")
-    include("**/*.java")
-    newLine = false
-    val url :String by project.properties
-    val organization :String by project.properties
-    val name :String by project.properties
-    if (this is ExtensionAware) { // By default, extensions that are being configured are not according to kotlin-dsl
-        val extensionCon: ExtraPropertiesExtension = (this as ExtensionAware).extra
-        extensionCon.set("url", url)
-        extensionCon.set("organization", organization)
-        extensionCon.set("name", name)
-    }
-
-}
-
-tasks.getByName<ProcessResources>("processResources") {
-    from("LICENSE.txt")
-}
 
 configure<CheckstyleExtension> {
     toolVersion = "8.7"

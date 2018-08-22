@@ -12,7 +12,6 @@ buildscript {
     }
 
     dependencies {
-        classpath("gradle.plugin.net.minecrell:licenser:0.3")
         classpath("com.github.jengelman.gradle.plugins:shadow:1.2.4")
         classpath("gradle.plugin.org.spongepowered:spongegradle:0.8.1")
         classpath("gradle.plugin.org.spongepowered:event-impl-gen:5.0.2")
@@ -21,10 +20,16 @@ buildscript {
 
 extra["api"] = this
 
+allprojects {
+    apply {
+        plugin("java")
+    }
+}
 
 plugins {
     java
 }
+
 apply {
     from("gradle/sponge.gradle.kts")
     plugin("org.spongepowered.meta")
