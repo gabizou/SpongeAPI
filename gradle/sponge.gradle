@@ -5,7 +5,7 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 
-apply plugin: 'org.spongepowered.gradle'
+//apply plugin: 'org.spongepowered.gradle'
 
 defaultTasks 'licenseFormat', 'build'
 
