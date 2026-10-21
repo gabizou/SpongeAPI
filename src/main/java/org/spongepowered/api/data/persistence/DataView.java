@@ -41,6 +41,7 @@ import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
@@ -966,18 +967,7 @@ public interface DataView {
      *     passes through a non-view value
      */
     default Optional<Boolean> exactBoolean(final DataQuery path) {
-        return this.exactValue(path).map(value -> {
-            if (value instanceof final Boolean bool) {
-                return bool;
-            }
-            if (DataView.isIntegral(value)) {
-                final long l = ((Number) value).longValue();
-                if (l == 0 || l == 1) {
-                    return l == 1;
-                }
-            }
-            throw DataView.exactMismatch(path, "a Boolean or an integral 0 or 1", value);
-        });
+        return this.exact(path, ExactValues::toBoolean);
     }
 
     /**
@@ -1001,7 +991,7 @@ public interface DataView {
      *     non-view value
      */
     default Optional<Byte> exactByte(final DataQuery path) {
-        return this.exactValue(path).map(value -> (byte) DataView.exactIntegral(path, value, Byte.MIN_VALUE, Byte.MAX_VALUE, "a byte"));
+        return this.exact(path, ExactValues::toByte);
     }
 
     /**
@@ -1025,7 +1015,7 @@ public interface DataView {
      *     a non-view value
      */
     default Optional<Short> exactShort(final DataQuery path) {
-        return this.exactValue(path).map(value -> (short) DataView.exactIntegral(path, value, Short.MIN_VALUE, Short.MAX_VALUE, "a short"));
+        return this.exact(path, ExactValues::toShort);
     }
 
     /**
@@ -1051,11 +1041,7 @@ public interface DataView {
      *     non-view value
      */
     default OptionalInt exactInt(final DataQuery path) {
-        final Optional<Object> value = this.exactValue(path);
-        if (value.isEmpty()) {
-            return OptionalInt.empty();
-        }
-        return OptionalInt.of((int) DataView.exactIntegral(path, value.get(), Integer.MIN_VALUE, Integer.MAX_VALUE, "an int"));
+        return this.exact(path, ExactValues::toInt).map(OptionalInt::of).orElseGet(OptionalInt::empty);
     }
 
     /**
@@ -1077,11 +1063,7 @@ public interface DataView {
      *     integral number, or the path passes through a non-view value
      */
     default OptionalLong exactLong(final DataQuery path) {
-        final Optional<Object> value = this.exactValue(path);
-        if (value.isEmpty()) {
-            return OptionalLong.empty();
-        }
-        return OptionalLong.of(DataView.exactIntegral(path, value.get(), Long.MIN_VALUE, Long.MAX_VALUE, "a long"));
+        return this.exact(path, ExactValues::toLong).map(OptionalLong::of).orElseGet(OptionalLong::empty);
     }
 
     /**
@@ -1106,26 +1088,7 @@ public interface DataView {
      *     non-view value
      */
     default Optional<Float> exactFloat(final DataQuery path) {
-        return this.exactValue(path).map(value -> {
-            if (value instanceof final Float f) {
-                return f;
-            }
-            if (value instanceof final Double d) {
-                if (!Double.isFinite(d) || Math.abs(d) <= Float.MAX_VALUE) {
-                    return d.floatValue();
-                }
-                throw DataView.exactMismatch(path, "a float", value);
-            }
-            if (DataView.isIntegral(value)) {
-                final long l = ((Number) value).longValue();
-                final float f = (float) l;
-                // 0x1p63f is out of long range, so (long) f saturates; exclude it explicitly
-                if (f != 0x1p63f && (long) f == l) {
-                    return f;
-                }
-            }
-            throw DataView.exactMismatch(path, "a float", value);
-        });
+        return this.exact(path, ExactValues::toFloat);
     }
 
     /**
@@ -1149,26 +1112,7 @@ public interface DataView {
      *     value
      */
     default OptionalDouble exactDouble(final DataQuery path) {
-        final Optional<Object> value = this.exactValue(path);
-        if (value.isEmpty()) {
-            return OptionalDouble.empty();
-        }
-        final Object v = value.get();
-        if (v instanceof final Double d) {
-            return OptionalDouble.of(d);
-        }
-        if (v instanceof final Float f) {
-            return OptionalDouble.of(f);
-        }
-        if (DataView.isIntegral(v)) {
-            final long l = ((Number) v).longValue();
-            final double d = (double) l;
-            // 0x1p63 is out of long range, so (long) d saturates; exclude it explicitly
-            if (d != 0x1p63 && (long) d == l) {
-                return OptionalDouble.of(d);
-            }
-        }
-        throw DataView.exactMismatch(path, "a double", v);
+        return this.exact(path, ExactValues::toDouble).map(OptionalDouble::of).orElseGet(OptionalDouble::empty);
     }
 
     /**
@@ -1189,12 +1133,7 @@ public interface DataView {
      *     {@link String}, or the path passes through a non-view value
      */
     default Optional<String> exactString(final DataQuery path) {
-        return this.exactValue(path).map(value -> {
-            if (value instanceof final String string) {
-                return string;
-            }
-            throw DataView.exactMismatch(path, "a String", value);
-        });
+        return this.exact(path, ExactValues::toStringValue);
     }
 
     /**
@@ -1214,17 +1153,27 @@ public interface DataView {
      *     {@link DataView}, or the path passes through a non-view value
      */
     default Optional<DataView> exactView(final DataQuery path) {
-        return this.exactValue(path).map(value -> {
-            if (value instanceof final DataView view) {
-                return view;
-            }
-            throw DataView.exactMismatch(path, "a DataView", value);
-        });
+        return this.exact(path, ExactValues::toView);
+    }
+
+    private <T> Optional<T> exact(final DataQuery path, final Function<Object, T> conversion) {
+        final Optional<Object> value = this.exactValue(path);
+        if (value.isEmpty()) {
+            return Optional.empty();
+        }
+        try {
+            return Optional.of(conversion.apply(value.get()));
+        } catch (final DataCodecException e) {
+            throw e.at(path);
+        }
     }
 
     private Optional<Object> exactValue(final DataQuery path) {
         Objects.requireNonNull(path, "path");
         final List<String> parts = path.parts();
+        if (parts.isEmpty()) {
+            return Optional.of(this);
+        }
         DataView view = this;
         for (int i = 0; i < parts.size() - 1; i++) {
             final Optional<Object> next = view.get(DataQuery.of(parts.get(i)));
@@ -1232,33 +1181,12 @@ public interface DataView {
                 return Optional.empty();
             }
             if (!(next.get() instanceof final DataView nextView)) {
-                throw DataView.exactMismatch(DataQuery.of(parts.subList(0, i + 1)), "a DataView (it is part of the path '" + path + "')", next.get());
+                throw new DataCodecException("a DataView (it is part of the path '" + path + "')", next.get())
+                    .at(DataQuery.of(parts.subList(0, i + 1)));
             }
             view = nextView;
         }
-        if (parts.isEmpty()) {
-            return Optional.of(this);
-        }
         return view.get(DataQuery.of(parts.getLast()));
-    }
-
-    private static boolean isIntegral(final Object value) {
-        return value instanceof Byte || value instanceof Short || value instanceof Integer || value instanceof Long;
-    }
-
-    private static long exactIntegral(final DataQuery path, final Object value, final long min, final long max, final String expected) {
-        if (DataView.isIntegral(value)) {
-            final long l = ((Number) value).longValue();
-            if (l >= min && l <= max) {
-                return l;
-            }
-        }
-        throw DataView.exactMismatch(path, expected, value);
-    }
-
-    private static InvalidDataException exactMismatch(final DataQuery path, final String expected, final Object found) {
-        return new InvalidDataException("Expected " + expected + " at '" + path + "' but found "
-            + found.getClass().getSimpleName() + ": " + found);
     }
 
     /**
