@@ -43,8 +43,9 @@ import java.util.Optional;
  * @deprecated Replaced by {@link DataCodec} and {@link VersionedCodec}, which
  *     check values when they are encoded and report malformed data with its
  *     path when it is decoded.
+ *     This will be removed in API 22.
  */
-@Deprecated(since = "17")
+@Deprecated(forRemoval = true, since = "17")
 public abstract class AbstractDataBuilder<T extends DataSerializable> implements DataBuilder<T> {
 
     private final int supportedVersion;

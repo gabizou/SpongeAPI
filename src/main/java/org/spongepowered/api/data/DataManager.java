@@ -60,8 +60,9 @@ public interface DataManager {
      * @deprecated Part of the {@link DataSerializable} system. Use a
      *     {@link org.spongepowered.api.data.persistence.DataCodec} or
      *     {@link org.spongepowered.api.data.persistence.VersionedCodec}.
+     *     This will be removed in API 22.
      */
-    @Deprecated(since = "17")
+    @Deprecated(forRemoval = true, since = "17")
     <T extends DataSerializable> void registerBuilder(Class<T> clazz, DataBuilder<T> builder);
 
     /**
@@ -76,8 +77,9 @@ public interface DataManager {
      * @deprecated Part of the {@link DataSerializable} system. Use a
      *     {@link org.spongepowered.api.data.persistence.DataCodec} or
      *     {@link org.spongepowered.api.data.persistence.VersionedCodec}.
+     *     This will be removed in API 22.
      */
-    @Deprecated(since = "17")
+    @Deprecated(forRemoval = true, since = "17")
     <T extends DataSerializable> void registerContentUpdater(Class<T> clazz, DataContentUpdater updater);
 
     /**
@@ -96,8 +98,9 @@ public interface DataManager {
      * @deprecated Part of the {@link DataSerializable} system. Use a
      *     {@link org.spongepowered.api.data.persistence.DataCodec} or
      *     {@link org.spongepowered.api.data.persistence.VersionedCodec}.
+     *     This will be removed in API 22.
      */
-    @Deprecated(since = "17")
+    @Deprecated(forRemoval = true, since = "17")
     <T extends DataSerializable> Optional<DataContentUpdater> wrappedContentUpdater(Class<T> clazz, int fromVersion, int toVersion);
 
     /**
@@ -115,8 +118,9 @@ public interface DataManager {
      * @deprecated Part of the {@link DataSerializable} system. Use a
      *     {@link org.spongepowered.api.data.persistence.DataCodec} or
      *     {@link org.spongepowered.api.data.persistence.VersionedCodec}.
+     *     This will be removed in API 22.
      */
-    @Deprecated(since = "17")
+    @Deprecated(forRemoval = true, since = "17")
     <T extends DataSerializable> Optional<DataBuilder<T>> builder(Class<T> clazz);
 
     /**
@@ -133,8 +137,9 @@ public interface DataManager {
      * @deprecated Part of the {@link DataSerializable} system. Use a
      *     {@link org.spongepowered.api.data.persistence.DataCodec} or
      *     {@link org.spongepowered.api.data.persistence.VersionedCodec}.
+     *     This will be removed in API 22.
      */
-    @Deprecated(since = "17")
+    @Deprecated(forRemoval = true, since = "17")
     <T extends DataSerializable> Optional<T> deserialize(Class<T> clazz, DataView dataView);
 
     /**
@@ -184,8 +189,9 @@ public interface DataManager {
      * @deprecated Part of the {@link DataSerializable} system. Use a
      *     {@link org.spongepowered.api.data.persistence.DataCodec} or
      *     {@link org.spongepowered.api.data.persistence.VersionedCodec}.
+     *     This will be removed in API 22.
      */
-    @Deprecated(since = "17")
+    @Deprecated(forRemoval = true, since = "17")
     <T> Optional<DataTranslator<T>> translator(Class<T> objectClass);
 
     /**
@@ -198,8 +204,9 @@ public interface DataManager {
      * @deprecated Part of the {@link DataSerializable} system. Use a
      *     {@link org.spongepowered.api.data.persistence.DataCodec} or
      *     {@link org.spongepowered.api.data.persistence.VersionedCodec}.
+     *     This will be removed in API 22.
      */
-    @Deprecated(since = "17")
+    @Deprecated(forRemoval = true, since = "17")
     <T> void registerTranslator(Class<T> objectClass, DataTranslator<T> translator);
 
     /**
