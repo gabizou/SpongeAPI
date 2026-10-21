@@ -943,28 +943,40 @@ public interface DataView {
     Optional<List<Key<? extends Value<?>>>> getDataKeyList(DataQuery path);
 
     /**
-     * Gets the {@link Boolean} at the given path, without conversion.
+     * Gets the {@link Boolean} at the given path, accepting a
+     * {@link Boolean} or an integral number that is exactly {@code 0} or
+     * {@code 1}.
      *
-     * <p>Unlike {@link #getBoolean(DataQuery)}, this does not convert other
-     * values: only a {@link Boolean} is accepted.</p>
+     * <p>Minecraft stores booleans in NBT as byte tags, and JSON reads those
+     * back as integers, so a {@link Byte}, {@link Short}, {@link Integer} or
+     * {@link Long} of {@code 0} is {@code false} and of {@code 1} is
+     * {@code true}. Unlike {@link #getBoolean(DataQuery)}, any other number,
+     * and any string, is rejected rather than converted.</p>
      *
      * <p>An absent is returned only if nothing is stored at the path. If a
-     * value is stored but is not a {@link Boolean}, or a part of the path
-     * before the last holds a value that is not a {@link DataView}, an
+     * value is stored but is not accepted, or a part of the path before the
+     * last holds a value that is not a {@link DataView}, an
      * {@link InvalidDataException} is thrown instead, so a malformed value
      * is never mistaken for a missing one.</p>
      *
      * @param path The path of the value to get
      * @return The boolean, if present
-     * @throws InvalidDataException If a value is present but is not a
-     *     {@link Boolean}, or the path passes through a non-view value
+     * @throws InvalidDataException If a value is present but is neither a
+     *     {@link Boolean} nor an integral {@code 0} or {@code 1}, or the path
+     *     passes through a non-view value
      */
     default Optional<Boolean> exactBoolean(final DataQuery path) {
         return this.exactValue(path).map(value -> {
             if (value instanceof final Boolean bool) {
                 return bool;
             }
-            throw DataView.exactMismatch(path, "a Boolean", value);
+            if (DataView.isIntegral(value)) {
+                final long l = ((Number) value).longValue();
+                if (l == 0 || l == 1) {
+                    return l == 1;
+                }
+            }
+            throw DataView.exactMismatch(path, "a Boolean or an integral 0 or 1", value);
         });
     }
 
