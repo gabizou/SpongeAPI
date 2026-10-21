@@ -186,9 +186,6 @@ public interface DataView {
      * form. Reading the path back may therefore return a different type than
      * the one that was set.</p>
      *
-     * <p>If a part of the path before the last holds a value that is not a
-     * {@link DataView}, that value is replaced by a new {@link DataView}.</p>
-     *
      * @param path The path of the object to set
      * @param value The value of the data
      * @return This view, for chaining
