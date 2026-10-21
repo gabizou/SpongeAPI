@@ -37,6 +37,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.OptionalDouble;
+import java.util.OptionalInt;
+import java.util.OptionalLong;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -938,6 +941,313 @@ public interface DataView {
      * @return The list of keys, if available
      */
     Optional<List<Key<? extends Value<?>>>> getDataKeyList(DataQuery path);
+
+    /**
+     * Gets the {@link Boolean} at the given path, without conversion.
+     *
+     * <p>Unlike {@link #getBoolean(DataQuery)}, this does not convert other
+     * values: only a {@link Boolean} is accepted.</p>
+     *
+     * <p>An absent is returned only if nothing is stored at the path. If a
+     * value is stored but is not a {@link Boolean}, or a part of the path
+     * before the last holds a value that is not a {@link DataView}, an
+     * {@link InvalidDataException} is thrown instead, so a malformed value
+     * is never mistaken for a missing one.</p>
+     *
+     * @param path The path of the value to get
+     * @return The boolean, if present
+     * @throws InvalidDataException If a value is present but is not a
+     *     {@link Boolean}, or the path passes through a non-view value
+     */
+    default Optional<Boolean> exactBoolean(final DataQuery path) {
+        return this.exactValue(path).map(value -> {
+            if (value instanceof final Boolean bool) {
+                return bool;
+            }
+            throw DataView.exactMismatch(path, "a Boolean", value);
+        });
+    }
+
+    /**
+     * Gets the {@code byte} at the given path, accepting only integral
+     * numbers that fit in a {@code byte}.
+     *
+     * <p>A {@link Byte}, {@link Short}, {@link Integer} or {@link Long} is
+     * accepted if its value is within the range of a {@code byte}. Unlike
+     * {@link #getByte(DataQuery)}, values are never truncated and strings
+     * are never parsed.</p>
+     *
+     * <p>An absent is returned only if nothing is stored at the path. A
+     * present value that is not an accepted number, or is out of range, or a
+     * path that passes through a value that is not a {@link DataView}, causes
+     * an {@link InvalidDataException}.</p>
+     *
+     * @param path The path of the value to get
+     * @return The byte, if present
+     * @throws InvalidDataException If a value is present but cannot be
+     *     represented exactly as a {@code byte}, or the path passes through a
+     *     non-view value
+     */
+    default Optional<Byte> exactByte(final DataQuery path) {
+        return this.exactValue(path).map(value -> (byte) DataView.exactIntegral(path, value, Byte.MIN_VALUE, Byte.MAX_VALUE, "a byte"));
+    }
+
+    /**
+     * Gets the {@code short} at the given path, accepting only integral
+     * numbers that fit in a {@code short}.
+     *
+     * <p>A {@link Byte}, {@link Short}, {@link Integer} or {@link Long} is
+     * accepted if its value is within the range of a {@code short}. Unlike
+     * {@link #getShort(DataQuery)}, values are never truncated and strings
+     * are never parsed.</p>
+     *
+     * <p>An absent is returned only if nothing is stored at the path. A
+     * present value that is not an accepted number, or is out of range, or a
+     * path that passes through a value that is not a {@link DataView}, causes
+     * an {@link InvalidDataException}.</p>
+     *
+     * @param path The path of the value to get
+     * @return The short, if present
+     * @throws InvalidDataException If a value is present but cannot be
+     *     represented exactly as a {@code short}, or the path passes through
+     *     a non-view value
+     */
+    default Optional<Short> exactShort(final DataQuery path) {
+        return this.exactValue(path).map(value -> (short) DataView.exactIntegral(path, value, Short.MIN_VALUE, Short.MAX_VALUE, "a short"));
+    }
+
+    /**
+     * Gets the {@code int} at the given path, accepting only integral
+     * numbers that fit in an {@code int}.
+     *
+     * <p>A {@link Byte}, {@link Short}, {@link Integer} or {@link Long} is
+     * accepted if its value is within the range of an {@code int}. This
+     * tolerates formats that change the width of stored numbers, for example
+     * JSON, which reads small {@link Long}s back as {@link Integer}s. Unlike
+     * {@link #getInt(DataQuery)}, values are never truncated and strings are
+     * never parsed.</p>
+     *
+     * <p>An absent is returned only if nothing is stored at the path. A
+     * present value that is not an accepted number, or is out of range, or a
+     * path that passes through a value that is not a {@link DataView}, causes
+     * an {@link InvalidDataException}.</p>
+     *
+     * @param path The path of the value to get
+     * @return The int, if present
+     * @throws InvalidDataException If a value is present but cannot be
+     *     represented exactly as an {@code int}, or the path passes through a
+     *     non-view value
+     */
+    default OptionalInt exactInt(final DataQuery path) {
+        final Optional<Object> value = this.exactValue(path);
+        if (value.isEmpty()) {
+            return OptionalInt.empty();
+        }
+        return OptionalInt.of((int) DataView.exactIntegral(path, value.get(), Integer.MIN_VALUE, Integer.MAX_VALUE, "an int"));
+    }
+
+    /**
+     * Gets the {@code long} at the given path, accepting only integral
+     * numbers.
+     *
+     * <p>A {@link Byte}, {@link Short}, {@link Integer} or {@link Long} is
+     * accepted. Unlike {@link #getLong(DataQuery)}, floating point values are
+     * never truncated and strings are never parsed.</p>
+     *
+     * <p>An absent is returned only if nothing is stored at the path. A
+     * present value that is not an accepted number, or a path that passes
+     * through a value that is not a {@link DataView}, causes an
+     * {@link InvalidDataException}.</p>
+     *
+     * @param path The path of the value to get
+     * @return The long, if present
+     * @throws InvalidDataException If a value is present but is not an
+     *     integral number, or the path passes through a non-view value
+     */
+    default OptionalLong exactLong(final DataQuery path) {
+        final Optional<Object> value = this.exactValue(path);
+        if (value.isEmpty()) {
+            return OptionalLong.empty();
+        }
+        return OptionalLong.of(DataView.exactIntegral(path, value.get(), Long.MIN_VALUE, Long.MAX_VALUE, "a long"));
+    }
+
+    /**
+     * Gets the {@code float} at the given path, accepting numbers that can
+     * be stored in a {@code float} without overflow.
+     *
+     * <p>A {@link Float} is always accepted. A {@link Double} is accepted if
+     * it is not finite or lies within the range of a {@code float}; it is then
+     * rounded to the nearest {@code float}. This tolerates formats that store
+     * floats as doubles, for example JSON. An integral number is accepted if
+     * a {@code float} represents it exactly. Strings are never parsed.</p>
+     *
+     * <p>An absent is returned only if nothing is stored at the path. A
+     * present value that is not an accepted number, or a path that passes
+     * through a value that is not a {@link DataView}, causes an
+     * {@link InvalidDataException}.</p>
+     *
+     * @param path The path of the value to get
+     * @return The float, if present
+     * @throws InvalidDataException If a value is present but cannot be
+     *     stored in a {@code float} as described, or the path passes through a
+     *     non-view value
+     */
+    default Optional<Float> exactFloat(final DataQuery path) {
+        return this.exactValue(path).map(value -> {
+            if (value instanceof final Float f) {
+                return f;
+            }
+            if (value instanceof final Double d) {
+                if (!Double.isFinite(d) || Math.abs(d) <= Float.MAX_VALUE) {
+                    return d.floatValue();
+                }
+                throw DataView.exactMismatch(path, "a float", value);
+            }
+            if (DataView.isIntegral(value)) {
+                final long l = ((Number) value).longValue();
+                final float f = (float) l;
+                // 0x1p63f is out of long range, so (long) f saturates; exclude it explicitly
+                if (f != 0x1p63f && (long) f == l) {
+                    return f;
+                }
+            }
+            throw DataView.exactMismatch(path, "a float", value);
+        });
+    }
+
+    /**
+     * Gets the {@code double} at the given path, accepting numbers that a
+     * {@code double} represents exactly.
+     *
+     * <p>A {@link Double} or {@link Float} is always accepted. An integral
+     * number is accepted if a {@code double} represents it exactly, which is
+     * always the case up to a magnitude of 2<sup>53</sup>. Strings are never
+     * parsed.</p>
+     *
+     * <p>An absent is returned only if nothing is stored at the path. A
+     * present value that is not an accepted number, or a path that passes
+     * through a value that is not a {@link DataView}, causes an
+     * {@link InvalidDataException}.</p>
+     *
+     * @param path The path of the value to get
+     * @return The double, if present
+     * @throws InvalidDataException If a value is present but cannot be
+     *     represented as described, or the path passes through a non-view
+     *     value
+     */
+    default OptionalDouble exactDouble(final DataQuery path) {
+        final Optional<Object> value = this.exactValue(path);
+        if (value.isEmpty()) {
+            return OptionalDouble.empty();
+        }
+        final Object v = value.get();
+        if (v instanceof final Double d) {
+            return OptionalDouble.of(d);
+        }
+        if (v instanceof final Float f) {
+            return OptionalDouble.of(f);
+        }
+        if (DataView.isIntegral(v)) {
+            final long l = ((Number) v).longValue();
+            final double d = (double) l;
+            // 0x1p63 is out of long range, so (long) d saturates; exclude it explicitly
+            if (d != 0x1p63 && (long) d == l) {
+                return OptionalDouble.of(d);
+            }
+        }
+        throw DataView.exactMismatch(path, "a double", v);
+    }
+
+    /**
+     * Gets the {@link String} at the given path, without conversion.
+     *
+     * <p>Unlike {@link #getString(DataQuery)}, other values are never
+     * converted with {@link Object#toString()}: only a {@link String} is
+     * accepted.</p>
+     *
+     * <p>An absent is returned only if nothing is stored at the path. A
+     * present value that is not a {@link String}, or a path that passes
+     * through a value that is not a {@link DataView}, causes an
+     * {@link InvalidDataException}.</p>
+     *
+     * @param path The path of the value to get
+     * @return The string, if present
+     * @throws InvalidDataException If a value is present but is not a
+     *     {@link String}, or the path passes through a non-view value
+     */
+    default Optional<String> exactString(final DataQuery path) {
+        return this.exactValue(path).map(value -> {
+            if (value instanceof final String string) {
+                return string;
+            }
+            throw DataView.exactMismatch(path, "a String", value);
+        });
+    }
+
+    /**
+     * Gets the {@link DataView} at the given path.
+     *
+     * <p>Unlike {@link #getView(DataQuery)}, a value that is present but is
+     * not a {@link DataView} is reported instead of being treated as
+     * absent.</p>
+     *
+     * <p>An absent is returned only if nothing is stored at the path. A
+     * present value that is not a {@link DataView}, or a path that passes
+     * through such a value, causes an {@link InvalidDataException}.</p>
+     *
+     * @param path The path of the view to get
+     * @return The view, if present
+     * @throws InvalidDataException If a value is present but is not a
+     *     {@link DataView}, or the path passes through a non-view value
+     */
+    default Optional<DataView> exactView(final DataQuery path) {
+        return this.exactValue(path).map(value -> {
+            if (value instanceof final DataView view) {
+                return view;
+            }
+            throw DataView.exactMismatch(path, "a DataView", value);
+        });
+    }
+
+    private Optional<Object> exactValue(final DataQuery path) {
+        Objects.requireNonNull(path, "path");
+        final List<String> parts = path.parts();
+        DataView view = this;
+        for (int i = 0; i < parts.size() - 1; i++) {
+            final Optional<Object> next = view.get(DataQuery.of(parts.get(i)));
+            if (next.isEmpty()) {
+                return Optional.empty();
+            }
+            if (!(next.get() instanceof final DataView nextView)) {
+                throw DataView.exactMismatch(DataQuery.of(parts.subList(0, i + 1)), "a DataView (it is part of the path '" + path + "')", next.get());
+            }
+            view = nextView;
+        }
+        if (parts.isEmpty()) {
+            return Optional.of(this);
+        }
+        return view.get(DataQuery.of(parts.getLast()));
+    }
+
+    private static boolean isIntegral(final Object value) {
+        return value instanceof Byte || value instanceof Short || value instanceof Integer || value instanceof Long;
+    }
+
+    private static long exactIntegral(final DataQuery path, final Object value, final long min, final long max, final String expected) {
+        if (DataView.isIntegral(value)) {
+            final long l = ((Number) value).longValue();
+            if (l >= min && l <= max) {
+                return l;
+            }
+        }
+        throw DataView.exactMismatch(path, expected, value);
+    }
+
+    private static InvalidDataException exactMismatch(final DataQuery path, final String expected, final Object found) {
+        return new InvalidDataException("Expected " + expected + " at '" + path + "' but found "
+            + found.getClass().getSimpleName() + ": " + found);
+    }
 
     /**
      * Copies this {@link DataView} and all of it's contents into a new
