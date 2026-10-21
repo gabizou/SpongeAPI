@@ -56,7 +56,12 @@ public interface DataManager {
      * @param clazz The class of the {@link DataSerializable}
      * @param builder The builder that can build the data serializable
      * @param <T> The type of data serializable
+     *
+     * @deprecated Part of the {@link DataSerializable} system. Use a
+     *     {@link org.spongepowered.api.data.persistence.DataCodec} or
+     *     {@link org.spongepowered.api.data.persistence.VersionedCodec}.
      */
+    @Deprecated(since = "17")
     <T extends DataSerializable> void registerBuilder(Class<T> clazz, DataBuilder<T> builder);
 
     /**
@@ -67,7 +72,12 @@ public interface DataManager {
      * @param clazz The data serializable class
      * @param updater The updater
      * @param <T> The type of DataSerializable
+     *
+     * @deprecated Part of the {@link DataSerializable} system. Use a
+     *     {@link org.spongepowered.api.data.persistence.DataCodec} or
+     *     {@link org.spongepowered.api.data.persistence.VersionedCodec}.
      */
+    @Deprecated(since = "17")
     <T extends DataSerializable> void registerContentUpdater(Class<T> clazz, DataContentUpdater updater);
 
     /**
@@ -82,7 +92,12 @@ public interface DataManager {
      * @param toVersion The version converting to
      * @param <T> The type of data serializable
      * @return The content updater, if available
+     *
+     * @deprecated Part of the {@link DataSerializable} system. Use a
+     *     {@link org.spongepowered.api.data.persistence.DataCodec} or
+     *     {@link org.spongepowered.api.data.persistence.VersionedCodec}.
      */
+    @Deprecated(since = "17")
     <T extends DataSerializable> Optional<DataContentUpdater> wrappedContentUpdater(Class<T> clazz, int fromVersion, int toVersion);
 
     /**
@@ -96,7 +111,12 @@ public interface DataManager {
      * @param clazz The class of the data serializable
      * @param <T> The type of data serializable
      * @return The builder, if available
+     *
+     * @deprecated Part of the {@link DataSerializable} system. Use a
+     *     {@link org.spongepowered.api.data.persistence.DataCodec} or
+     *     {@link org.spongepowered.api.data.persistence.VersionedCodec}.
      */
+    @Deprecated(since = "17")
     <T extends DataSerializable> Optional<DataBuilder<T>> builder(Class<T> clazz);
 
     /**
@@ -109,7 +129,12 @@ public interface DataManager {
      * @param dataView The data view containing raw data
      * @param <T> The type of data serializable
      * @return The data serializable, if available
+     *
+     * @deprecated Part of the {@link DataSerializable} system. Use a
+     *     {@link org.spongepowered.api.data.persistence.DataCodec} or
+     *     {@link org.spongepowered.api.data.persistence.VersionedCodec}.
      */
+    @Deprecated(since = "17")
     <T extends DataSerializable> Optional<T> deserialize(Class<T> clazz, DataView dataView);
 
     /**
@@ -155,7 +180,12 @@ public interface DataManager {
      * @param objectClass The class of the object
      * @param <T> The type of object
      * @return The data translator, if available
+     *
+     * @deprecated Part of the {@link DataSerializable} system. Use a
+     *     {@link org.spongepowered.api.data.persistence.DataCodec} or
+     *     {@link org.spongepowered.api.data.persistence.VersionedCodec}.
      */
+    @Deprecated(since = "17")
     <T> Optional<DataTranslator<T>> translator(Class<T> objectClass);
 
     /**
@@ -164,7 +194,12 @@ public interface DataManager {
      * @param objectClass The class of the object type being managed
      * @param translator The translator for the desired class object
      * @param <T> The type of object
+     *
+     * @deprecated Part of the {@link DataSerializable} system. Use a
+     *     {@link org.spongepowered.api.data.persistence.DataCodec} or
+     *     {@link org.spongepowered.api.data.persistence.VersionedCodec}.
      */
+    @Deprecated(since = "17")
     <T> void registerTranslator(Class<T> objectClass, DataTranslator<T> translator);
 
     /**

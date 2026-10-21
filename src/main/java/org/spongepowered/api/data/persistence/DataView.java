@@ -490,7 +490,12 @@ public interface DataView {
      *
      * @param path The path of the value to get
      * @return The boolean, if available
+     *
+     * @deprecated Converts, truncates and parses values silently. Use
+     *     {@link #exactBoolean(DataQuery)}, which accepts only values it can represent
+     *     exactly and reports anything else.
      */
+    @Deprecated(since = "17")
     Optional<Boolean> getBoolean(DataQuery path);
 
     /**
@@ -505,7 +510,12 @@ public interface DataView {
      *
      * @param path The path of the value to get
      * @return The boolean, if available
+     *
+     * @deprecated Converts, truncates and parses values silently. Use
+     *     {@link #exactShort(DataQuery)}, which accepts only values it can represent
+     *     exactly and reports anything else.
      */
+    @Deprecated(since = "17")
     Optional<Short> getShort(DataQuery path);
 
     /**
@@ -520,7 +530,12 @@ public interface DataView {
      *
      * @param path The path of the value to get
      * @return The boolean, if available
+     *
+     * @deprecated Converts, truncates and parses values silently. Use
+     *     {@link #exactByte(DataQuery)}, which accepts only values it can represent
+     *     exactly and reports anything else.
      */
+    @Deprecated(since = "17")
     Optional<Byte> getByte(DataQuery path);
 
     /**
@@ -535,7 +550,12 @@ public interface DataView {
      *
      * @param path The path of the value to get
      * @return The integer, if available
+     *
+     * @deprecated Converts, truncates and parses values silently. Use
+     *     {@link #exactInt(DataQuery)}, which accepts only values it can represent
+     *     exactly and reports anything else.
      */
+    @Deprecated(since = "17")
     Optional<Integer> getInt(DataQuery path);
 
     /**
@@ -550,7 +570,12 @@ public interface DataView {
      *
      * @param path The path of the value to get
      * @return The long, if available
+     *
+     * @deprecated Converts, truncates and parses values silently. Use
+     *     {@link #exactLong(DataQuery)}, which accepts only values it can represent
+     *     exactly and reports anything else.
      */
+    @Deprecated(since = "17")
     Optional<Long> getLong(DataQuery path);
 
     /**
@@ -565,7 +590,12 @@ public interface DataView {
      *
      * @param path The path of the value to get
      * @return The boolean, if available
+     *
+     * @deprecated Converts, truncates and parses values silently. Use
+     *     {@link #exactFloat(DataQuery)}, which accepts only values it can represent
+     *     exactly and reports anything else.
      */
+    @Deprecated(since = "17")
     Optional<Float> getFloat(DataQuery path);
 
     /**
@@ -580,7 +610,12 @@ public interface DataView {
      *
      * @param path The path of the value to get
      * @return The double, if available
+     *
+     * @deprecated Converts, truncates and parses values silently. Use
+     *     {@link #exactDouble(DataQuery)}, which accepts only values it can represent
+     *     exactly and reports anything else.
      */
+    @Deprecated(since = "17")
     Optional<Double> getDouble(DataQuery path);
 
     /**
@@ -595,7 +630,12 @@ public interface DataView {
      *
      * @param path The path of the value to get
      * @return The string, if available
+     *
+     * @deprecated Converts, truncates and parses values silently. Use
+     *     {@link #exactString(DataQuery)}, which accepts only values it can represent
+     *     exactly and reports anything else.
      */
+    @Deprecated(since = "17")
     Optional<String> getString(DataQuery path);
 
     /**
@@ -787,7 +827,14 @@ public interface DataView {
      *
      * @param path The path of the value to get
      * @return The list of maps, if available
+     *
+     * @deprecated Maps stored with {@link #set(DataQuery, Object)} become
+     *     {@link DataView}s, so this returns an empty list for them. Use
+     *     {@link #getViewList(DataQuery)}, or
+     *     {@code DataCodec.mapOf(codec).listOf()} with
+     *     {@link DataCodec#read(DataView, DataQuery)}.
      */
+    @Deprecated(since = "17")
     Optional<List<Map<?, ?>>> getMapList(DataQuery path);
 
     /**
@@ -818,7 +865,12 @@ public interface DataView {
      * @param path The path of the value to get
      * @param clazz The class of the {@link DataSerializable}
      * @return The deserialized object, if available
+     *
+     * @deprecated Part of the {@link DataSerializable} and {@link DataTranslator}
+     *     system. Use a {@link DataCodec} with
+     *     {@link DataCodec#read(DataView, DataQuery)}.
      */
+    @Deprecated(since = "17")
     <T extends DataSerializable> Optional<T> getSerializable(DataQuery path, Class<T> clazz);
 
     /**
@@ -837,7 +889,12 @@ public interface DataView {
      * @param path The path of the list value to get
      * @param clazz The class of the {@link DataSerializable}
      * @return The deserialized objects in a list, if available
+     *
+     * @deprecated Part of the {@link DataSerializable} and {@link DataTranslator}
+     *     system. Use a {@link DataCodec} with
+     *     {@link DataCodec#read(DataView, DataQuery)}.
      */
+    @Deprecated(since = "17")
     <T extends DataSerializable> Optional<List<T>> getSerializableList(DataQuery path, Class<T> clazz);
 
     /**
@@ -855,7 +912,12 @@ public interface DataView {
      * @param path The path of the value to get
      * @param objectClass The class of the {@link Object}
      * @return The deserialized object, if available
+     *
+     * @deprecated Part of the {@link DataSerializable} and {@link DataTranslator}
+     *     system. Use a {@link DataCodec} with
+     *     {@link DataCodec#read(DataView, DataQuery)}.
      */
+    @Deprecated(since = "17")
     <T> Optional<T> getObject(DataQuery path, Class<T> objectClass);
 
     /**
@@ -874,7 +936,12 @@ public interface DataView {
      * @param path The path of the value to get
      * @param objectClass The class of the {@link Object}
      * @return The deserialized objects in a list, if available
+     *
+     * @deprecated Part of the {@link DataSerializable} and {@link DataTranslator}
+     *     system. Use a {@link DataCodec} with
+     *     {@link DataCodec#read(DataView, DataQuery)}.
      */
+    @Deprecated(since = "17")
     <T> Optional<List<T>> getObjectList(DataQuery path, Class<T> objectClass);
 
     /**

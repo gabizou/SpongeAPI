@@ -39,7 +39,12 @@ import java.util.Optional;
  * custom content.
  *
  * @param <T> The type of DataSerializable
+ *
+ * @deprecated Replaced by {@link DataCodec} and {@link VersionedCodec}, which
+ *     check values when they are encoded and report malformed data with its
+ *     path when it is decoded.
  */
+@Deprecated(since = "17")
 public abstract class AbstractDataBuilder<T extends DataSerializable> implements DataBuilder<T> {
 
     private final int supportedVersion;

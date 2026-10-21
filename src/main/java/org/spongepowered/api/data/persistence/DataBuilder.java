@@ -35,7 +35,12 @@ import java.util.Optional;
  * {@link AbstractDataBuilder} as it implements content updating</p>
  *
  * @param <T> The type of data serializable this builder can build
+ *
+ * @deprecated Replaced by {@link DataCodec} and {@link VersionedCodec}, which
+ *     check values when they are encoded and report malformed data with its
+ *     path when it is decoded.
  */
+@Deprecated(since = "17")
 public interface DataBuilder<T extends DataSerializable> {
 
     /**

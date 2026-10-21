@@ -35,7 +35,12 @@ import java.util.Map;
  * during {@link DataView#set(DataQuery, Object)}.
  *
  * @param <T> The type of object that this translator can handle
+ *
+ * @deprecated Replaced by {@link DataCodec} and {@link VersionedCodec}, which
+ *     check values when they are encoded and report malformed data with its
+ *     path when it is decoded.
  */
+@Deprecated(since = "17")
 public interface DataTranslator<T> {
 
     /**

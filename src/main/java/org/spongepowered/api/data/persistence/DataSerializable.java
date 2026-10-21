@@ -29,7 +29,12 @@ package org.spongepowered.api.data.persistence;
  * <p>DataContainers received from {@link DataSerializable#toContainer()}
  * should be considered to be copies of the original data, and therefore,
  * thread safe.</p>
+ *
+ * @deprecated Replaced by {@link DataCodec} and {@link VersionedCodec}, which
+ *     check values when they are encoded and report malformed data with its
+ *     path when it is decoded.
  */
+@Deprecated(since = "17")
 public interface DataSerializable {
 
     /**
