@@ -36,7 +36,7 @@ public interface TextDisplay extends DisplayEntity {
      * @return the displayed text
      */
     default Component displayedText() {
-        return this.require(Keys.DISPLAY_NAME);
+        return this.require(Keys.TEXT);
     }
 
     /**
@@ -49,12 +49,13 @@ public interface TextDisplay extends DisplayEntity {
     }
 
     /**
-     * Gets the opacity of the displayed text.
+     * Gets the opacity of the displayed text, from 0 to 255.
      *
      * @return The opacity of the displayed text
+     * @see Keys#OPACITY
      */
     default int textOpacity() {
-        return this.require(Keys.OPACITY);
+        return Byte.toUnsignedInt(this.require(Keys.OPACITY));
     }
 
     /**
@@ -76,8 +77,8 @@ public interface TextDisplay extends DisplayEntity {
     }
 
     /**
-     * Gets the background color of the displayed text.
-     * Note that this supports alpha values.
+     * Gets the background color of the displayed text, without its
+     * opacity, see {@link #backgroundOpacity()}.
      *
      * @return The background color of the displayed text
      */
@@ -86,9 +87,21 @@ public interface TextDisplay extends DisplayEntity {
     }
 
     /**
-     * Gets the background color of the displayed text.
+     * Gets the opacity of the background of the displayed text, from
+     * 0 to 255.
      *
-     * @return The background color of the displayed text
+     * @return The opacity of the background
+     * @see Keys#TEXT_BACKGROUND_OPACITY
+     */
+    default int backgroundOpacity() {
+        return Byte.toUnsignedInt(this.require(Keys.TEXT_BACKGROUND_OPACITY));
+    }
+
+    /**
+     * Checks if the displayed text uses the default background of the
+     * chat in place of its {@link #backgroundColor() background color}.
+     *
+     * @return True if the default background is used, false otherwise
      */
     default boolean defaultBackground() {
         return this.require(Keys.HAS_DEFAULT_BACKGROUND);

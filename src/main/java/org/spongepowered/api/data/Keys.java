@@ -564,7 +564,9 @@ public final class Keys {
      * <p>For the skylight see {@link #SKY_LIGHT}.</p>
      * Readonly
      * <p>
-     * Or the blocklight override for a {@link DisplayEntity}.
+     * Or the blocklight override for a {@link DisplayEntity}, from 0 to 15.
+     * When only one of the overrides is offered the other one is 15, and
+     * removing either removes both, as vanilla overrides them together.
      * </p>
      */
     public static final Key<Value<Integer>> BLOCK_LIGHT = Keys.key(ResourceKey.sponge("block_light"), Integer.class);
@@ -894,6 +896,28 @@ public final class Keys {
     public static final Key<Value<UUID>> CREATOR = Keys.key(ResourceKey.sponge("creator"), UUID.class);
 
     /**
+     * The height of the culling box of a {@link DisplayEntity}, in blocks.
+     *
+     * <p>The client only skips rendering the display when this box, which
+     * extends upwards from the entity's position, is out of view. A value
+     * of {@code 0} disables culling. Vanilla defaults to {@code 0}.</p>
+     *
+     * <p>See {@link #CULLING_WIDTH} for the width.</p>
+     */
+    public static final Key<Value<Double>> CULLING_HEIGHT = Keys.key(ResourceKey.sponge("culling_height"), Double.class);
+
+    /**
+     * The width of the culling box of a {@link DisplayEntity}, in blocks.
+     *
+     * <p>The client only skips rendering the display when this box, which
+     * is centered horizontally on the entity's position, is out of view.
+     * A value of {@code 0} disables culling. Vanilla defaults to {@code 0}.</p>
+     *
+     * <p>See {@link #CULLING_HEIGHT} for the height.</p>
+     */
+    public static final Key<Value<Double>> CULLING_WIDTH = Keys.key(ResourceKey.sponge("culling_width"), Double.class);
+
+    /**
      * The current {@link SpellType} a {@link Spellcaster} is casting.
      */
     public static final Key<Value<SpellType>> CURRENT_SPELL = Keys.key(ResourceKey.sponge("current_spell"), SpellType.class);
@@ -1026,7 +1050,7 @@ public final class Keys {
      * <p>On an {@link ItemStack}, this represents the {@link Keys#CUSTOM_NAME} or if not set the {@link ItemType}s translation.
      * <p>On a {@link BlockEntity}, this usually represents the name displayed in its {@link org.spongepowered.api.item.inventory.Container}
      * <p>On a {@link World} or {@link ServerWorldProperties}, this represents the display name of the corresponding {@link ServerWorld}</p>
-     * <p>On a {@link TextDisplay} this is modifiable.</p>
+     * <p>For the text shown by a {@link TextDisplay}, see {@link #TEXT}.</p>
      */
     public static final Key<Value<Component>> DISPLAY_NAME = Keys.key(ResourceKey.sponge("display_name"), Component.class);
 
@@ -1373,6 +1397,15 @@ public final class Keys {
     public static final Key<Value<GrassColorModifier>> GRASS_COLOR_MODIFIER = Keys.key(ResourceKey.sponge("grass_color_modifier"), GrassColorModifier.class);
 
     /**
+     * The {@link Color} of the glowing outline of a {@link DisplayEntity}
+     * when it is {@link #IS_GLOWING glowing}.
+     *
+     * <p>When absent, the outline uses the color of the entity's team, as
+     * for any other entity. Removing this key clears the override.</p>
+     */
+    public static final Key<Value<Color>> GLOW_COLOR = Keys.key(ResourceKey.sponge("glow_color"), Color.class);
+
+    /**
      * Whether a {@link org.spongepowered.api.block.entity.Sign.SignText} has glowing text (from dying
      * with {@link ItemTypes#GLOW_INK_SAC}). When using it on {@link Sign} this refers to the {@link #SIGN_FRONT_TEXT} only.
      */
@@ -1695,12 +1728,22 @@ public final class Keys {
     public static final Key<Value<Boolean>> INTANGIBLE_PROJECTILE = Keys.key(ResourceKey.sponge("intangible_projectile"), Boolean.class);
 
     /**
-     * The interpolation delay of a {@link DisplayEntity}
+     * How long the client waits after receiving a change to a
+     * {@link DisplayEntity} before it starts interpolating it, see
+     * {@link #INTERPOLATION_DURATION}.
+     *
+     * <p>Offering it, even unchanged, restarts the interpolation of the
+     * latest change. It is not saved with the entity.</p>
      */
     public static final Key<Value<Ticks>> INTERPOLATION_DELAY = Keys.key(ResourceKey.sponge("interpolation_delay"), Ticks.class);
 
     /**
-     * The interpolation duration of a {@link DisplayEntity}
+     * How long the client interpolates changes to the transformation of a
+     * {@link DisplayEntity} over, as well as the
+     * {@link #TEXT_BACKGROUND_COLOR background} and {@link #OPACITY text
+     * opacity} of a {@link TextDisplay}.
+     *
+     * <p>Vanilla defaults to 0, which applies changes at once.</p>
      */
     public static final Key<Value<Ticks>> INTERPOLATION_DURATION = Keys.key(ResourceKey.sponge("interpolation_duration"), Ticks.class);
 
@@ -2477,7 +2520,10 @@ public final class Keys {
     public static final Key<Value<ResourceKey>> MAP_WORLD = Keys.key(ResourceKey.sponge("map_world"), ResourceKey.class);
 
     /**
-     * The {@link Matrix4d} of a {@link DisplayEntity}
+     * The transformation of a {@link DisplayEntity}, relative to the
+     * entity's position, as an affine {@link Matrix4d}.
+     *
+     * <p>See {@link #TRANSFORM} for it as a {@link Transform}.</p>
      */
     public static final Key<Value<Matrix4d>> MATRIX = Keys.key(ResourceKey.sponge("matrix"), Matrix4d.class);
 
@@ -2678,7 +2724,12 @@ public final class Keys {
     public static final Key<Value<Boolean>> ON_GROUND = Keys.key(ResourceKey.sponge("on_ground"), Boolean.class);
 
     /**
-     * The text opacity of a {@link TextDisplay}. 0 to 255
+     * The text opacity of a {@link TextDisplay}, from 0 to 255 read as an
+     * unsigned byte: {@code (byte) 255}, or {@code -1}, is fully opaque.
+     *
+     * <p>Vanilla defaults to fully opaque. The client renders values up
+     * to 3 fully opaque, and does not render the text at all for values
+     * from 4 to 26.</p>
      */
     public static final Key<Value<Byte>> OPACITY = Keys.key(ResourceKey.sponge("opacity"), Byte.class);
 
@@ -3118,7 +3169,9 @@ public final class Keys {
     public static final Key<Value<SerializationBehavior>> SERIALIZATION_BEHAVIOR = Keys.key(ResourceKey.sponge("serialization_behavior"), SerializationBehavior.class);
 
     /**
-     * The shadow radius of a {@link DisplayEntity}
+     * The shadow radius of a {@link DisplayEntity}, in blocks.
+     *
+     * <p>Vanilla defaults to 0, which casts no shadow.</p>
      */
     public static final Key<Value<Double>> SHADOW_RADIUS = Keys.key(ResourceKey.sponge("shadow_radius"), Double.class);
 
@@ -3212,7 +3265,9 @@ public final class Keys {
      * For the blocklight see {@link #BLOCK_LIGHT}.
      * Readonly
      * <p>
-     * Or the skylight override for a {@link DisplayEntity}.
+     * Or the skylight override for a {@link DisplayEntity}, from 0 to 15.
+     * When only one of the overrides is offered the other one is 15, and
+     * removing either removes both, as vanilla overrides them together.
      * </p>
      */
     public static final Key<Value<Integer>> SKY_LIGHT = Keys.key(ResourceKey.sponge("sky_light"), Integer.class);
@@ -3434,7 +3489,10 @@ public final class Keys {
     public static final Key<Value<Vector3i>> TARGET_POSITION = Keys.key(ResourceKey.sponge("target_position"), Vector3i.class);
 
     /**
-     * The teleport duration of a {@link DisplayEntity}
+     * How long the client interpolates changes of the position and
+     * rotation of a {@link DisplayEntity} over, from 0 to 59 ticks.
+     *
+     * <p>Vanilla defaults to 0, which moves the display at once.</p>
      */
     public static final Key<Value<Ticks>> TELEPORT_DURATION = Keys.key(ResourceKey.sponge("teleport_duration"), Ticks.class);
 
@@ -3445,17 +3503,33 @@ public final class Keys {
     public static final Key<Value<TemperatureModifier>> TEMPERATURE_MODIFIER = Keys.key(ResourceKey.sponge("temperature_modifier"), TemperatureModifier.class);
 
     /**
+     * The text displayed by a {@link TextDisplay}.
+     *
+     * <p>Unlike {@link #DISPLAY_NAME}, this is not the name of the entity:
+     * the {@link #CUSTOM_NAME} of a {@link TextDisplay} is still shown as a
+     * nametag when {@link #IS_CUSTOM_NAME_VISIBLE visible}.</p>
+     */
+    public static final Key<Value<Component>> TEXT = Keys.key(ResourceKey.sponge("text"), Component.class);
+
+    /**
      * The {@link TextAlignment} of a {@link TextDisplay}.
      */
     public static final Key<Value<TextAlignment>> TEXT_ALIGNMENT = Keys.key(ResourceKey.sponge("text_alignment"), TextAlignment.class);
 
     /**
-     * The background {@link Color} of a {@link TextDisplay}.
+     * The background {@link Color} of a {@link TextDisplay}, without its
+     * opacity, see {@link #TEXT_BACKGROUND_OPACITY}.
+     *
+     * <p>Not used while {@link #HAS_DEFAULT_BACKGROUND} is set.</p>
      */
     public static final Key<Value<Color>> TEXT_BACKGROUND_COLOR = Keys.key(ResourceKey.sponge("text_background_color"), Color.class);
 
     /**
-     * The background opacity of a {@link TextDisplay}. 0 to 255
+     * The background opacity of a {@link TextDisplay}, from 0 to 255 read
+     * as an unsigned byte. See {@link #TEXT_BACKGROUND_COLOR} for its color.
+     *
+     * <p>The client does not render backgrounds with an opacity below
+     * 26.</p>
      */
     public static final Key<Value<Byte>> TEXT_BACKGROUND_OPACITY = Keys.key(ResourceKey.sponge("text_background_opacity"), Byte.class);
 
@@ -3521,7 +3595,18 @@ public final class Keys {
     public static final Key<Value<Boolean>> TRANSIENT = Keys.key(ResourceKey.sponge("transient"), Boolean.class);
 
     /**
-     * The {@link Transform} of a {@link DisplayEntity}
+     * The transformation of a {@link DisplayEntity}, relative to the
+     * entity's position, as a {@link Transform}: its position is the
+     * translation, its rotation the left rotation and its scale the scale
+     * of the transformation.
+     *
+     * <p>A {@link Transform} has no right rotation: offering one resets the
+     * right rotation, and reading one folds the right rotation into its
+     * rotation, which is only exact while the scale is uniform. See
+     * {@link #MATRIX} for the exact transformation.</p>
+     *
+     * <p>This is not the {@link Entity#transform() transform} of the
+     * entity in the world.</p>
      */
     public static final Key<Value<Transform>> TRANSFORM = Keys.key(ResourceKey.sponge("transform"), Transform.class);
 
@@ -3600,7 +3685,10 @@ public final class Keys {
     public static final Key<Value<Integer>> VIEW_DISTANCE = Keys.key(ResourceKey.sponge("view_distance"), Integer.class);
 
     /**
-     * The view range of a {@link DisplayEntity}
+     * The view range of a {@link DisplayEntity}, as a multiplier of 64
+     * blocks, scaled by the client's entity distance setting.
+     *
+     * <p>Vanilla defaults to 1.</p>
      */
     public static final Key<Value<Double>> VIEW_RANGE = Keys.key(ResourceKey.sponge("view_range"), Double.class);
 

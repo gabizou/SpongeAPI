@@ -26,81 +26,124 @@ package org.spongepowered.api.entity.display;
 
 import org.spongepowered.api.data.Keys;
 import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.util.Color;
 import org.spongepowered.api.util.Ticks;
 import org.spongepowered.api.util.Transform;
 import org.spongepowered.math.matrix.Matrix4d;
 
 import java.util.Optional;
 
+/**
+ * A display entity renders a block, an item or some text in the world,
+ * without a hitbox, physics or ticking behavior of its own.
+ *
+ * <p>Besides its position and rotation in the world, a display has a
+ * transformation of its own, applied around the entity's position, see
+ * {@link #displayTransform()} and {@link #matrix()}.</p>
+ *
+ * <p>Changes to the transformation, and to the
+ * {@link TextDisplay#backgroundColor() background} and
+ * {@link TextDisplay#textOpacity() text opacity} of text displays, are
+ * interpolated by the client over the {@link #interpolationDuration()},
+ * starting after the {@link #interpolationDelay()}. Changes to the
+ * position and rotation of the entity itself are interpolated over the
+ * {@link #teleportDuration()} instead.</p>
+ */
 public interface DisplayEntity extends Entity {
 
     /**
-     * Returns the transform.
-     * <p>
-     * Supports interpolation.
-     * </p>
+     * Returns the transformation of the display, relative to the entity's
+     * position.
      *
-     * @return the transform
+     * <p>This is not the {@link #transform() transform} of the entity in
+     * the world. See {@link Keys#TRANSFORM} for how the transformation maps
+     * to a {@link Transform}; {@link #matrix()} represents it exactly.</p>
+     *
+     * <p>Supports interpolation.</p>
+     *
+     * @return The transformation of the display
      */
-    @Override
-    default Transform transform() {
+    default Transform displayTransform() {
         return this.require(Keys.TRANSFORM);
     }
 
     /**
-     * Returns the duration of the interpolation
+     * Returns the transformation of the display, relative to the entity's
+     * position, as an affine matrix.
      *
-     * @return the duration of the interpolation
+     * <p>Supports interpolation.</p>
+     *
+     * @return The transformation matrix
+     */
+    default Matrix4d matrix() {
+        return this.require(Keys.MATRIX);
+    }
+
+    /**
+     * Returns how long the client interpolates changes over.
+     *
+     * @return The duration of the interpolation
+     * @see Keys#INTERPOLATION_DURATION
      */
     default Ticks interpolationDuration() {
         return this.require(Keys.INTERPOLATION_DURATION);
     }
 
     /**
-     * Returns the delay to the start of the interpolation
+     * Returns how long the client waits before starting to interpolate
+     * the latest change.
      *
-     * @return the delay to the start of the interpolation
+     * @return The delay to the start of the interpolation
+     * @see Keys#INTERPOLATION_DELAY
      */
     default Ticks interpolationDelay() {
         return this.require(Keys.INTERPOLATION_DELAY);
     }
 
     /**
-     * Returns the duration of the teleportation
+     * Returns how long the client interpolates changes of the entity's
+     * position and rotation over.
      *
-     * @return the duration of the teleportation
+     * @return The duration of the teleportation
+     * @see Keys#TELEPORT_DURATION
      */
     default Ticks teleportDuration() {
         return this.require(Keys.TELEPORT_DURATION);
     }
 
+    /**
+     * Returns how the display rotates to face the viewer.
+     *
+     * @return The billboard type
+     */
     default BillboardType billboardType() {
         return this.require(Keys.BILLBOARD_TYPE);
     }
 
     /**
-     * Returns the skylight override.
+     * Returns the skylight override, if one is set.
      *
-     * @return the skylight override
+     * @return The skylight override
+     * @see Keys#SKY_LIGHT
      */
     default Optional<Integer> skyLight() {
         return this.get(Keys.SKY_LIGHT);
     }
 
     /**
-     * Returns the blocklight override.
+     * Returns the blocklight override, if one is set.
      *
-     * @return the blocklight override
+     * @return The blocklight override
+     * @see Keys#BLOCK_LIGHT
      */
     default Optional<Integer> blockLight() {
         return this.get(Keys.BLOCK_LIGHT);
     }
 
-
     /**
      * Returns the shadow radius.
      *
-     * @return the shadow radius.
+     * @return The shadow radius
      */
     default Double shadowRadius() {
         return this.require(Keys.SHADOW_RADIUS);
@@ -110,32 +153,51 @@ public interface DisplayEntity extends Entity {
      * Returns the shadow strength or darkness.
      * <p>Vanilla defaults to 1</p>
      *
-     * @return the shadow strength.
+     * @return The shadow strength
      */
     default Double shadowStrength() {
         return this.require(Keys.SHADOW_STRENGTH);
     }
 
-
     /**
      * Returns the range at which the display entity is rendered.
      *
-     * @return the view range
+     * @return The view range
+     * @see Keys#VIEW_RANGE
      */
     default Double viewRange() {
         return this.require(Keys.VIEW_RANGE);
     }
 
     /**
-     * Returns the matrix.
+     * Returns the width of the box the client culls the display by.
      *
-     * @return the matrix.
+     * @return The culling width
+     * @see Keys#CULLING_WIDTH
      */
-    default Matrix4d matrix() {
-        return this.require(Keys.MATRIX);
+    default double cullingWidth() {
+        return this.require(Keys.CULLING_WIDTH);
     }
 
-    // TODO bounding box (maybe BASE_SIZE if this is not smth. else in the entity)
-    // TODO glow_color_override -1 = use team color
+    /**
+     * Returns the height of the box the client culls the display by.
+     *
+     * @return The culling height
+     * @see Keys#CULLING_HEIGHT
+     */
+    default double cullingHeight() {
+        return this.require(Keys.CULLING_HEIGHT);
+    }
+
+    /**
+     * Returns the color of the glowing outline, if it overrides the color
+     * of the entity's team.
+     *
+     * @return The glow color override
+     * @see Keys#GLOW_COLOR
+     */
+    default Optional<Color> glowColor() {
+        return this.get(Keys.GLOW_COLOR);
+    }
 
 }
