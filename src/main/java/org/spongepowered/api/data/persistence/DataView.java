@@ -162,6 +162,10 @@ public interface DataView {
      * Gets an object from the desired path. If the path is not defined,
      * an absent Optional is returned.
      *
+     * <p>An absent is also returned when a part of the path before the last
+     * holds a value that is not a {@link DataView}, so that case cannot be
+     * told apart from a missing value.</p>
+     *
      * @param path The path to the Object
      * @return The Object, if available
      */
@@ -171,9 +175,24 @@ public interface DataView {
      * Sets the given Object value according to the given path relative to
      * this {@link DataView}'s path.
      *
+     * <p>The value must not be {@code null}; a {@link DataView} has no
+     * representation for null. Use {@link #remove(DataQuery)} to clear a
+     * path.</p>
+     *
+     * <p>The stored value is not necessarily the given object. Values may be
+     * converted when they are set: for example a {@link Map} is stored as a
+     * {@link DataView}, a {@link java.util.Collection} is copied, and types
+     * with a registered {@link DataTranslator} are stored in their translated
+     * form. Reading the path back may therefore return a different type than
+     * the one that was set.</p>
+     *
+     * <p>If a part of the path before the last holds a value that is not a
+     * {@link DataView}, that value is replaced by a new {@link DataView}.</p>
+     *
      * @param path The path of the object to set
      * @param value The value of the data
      * @return This view, for chaining
+     * @throws NullPointerException If the value is null
      */
     DataView set(DataQuery path, Object value);
 
@@ -448,7 +467,10 @@ public interface DataView {
      * Gets the underlying {@link Map} by path, if available.
      *
      * <p>If a {@link Map} does not exist, or data residing at the path is not
-     * an instance of a {@link Map}, an absent is returned.</p>
+     * an instance of a {@link Map} or a {@link DataView}, an absent is
+     * returned. A {@link DataView} is returned as a {@link Map} with
+     * {@link String} keys; note that {@link #set(DataQuery, Object)} stores
+     * maps as {@link DataView}s.</p>
      *
      * @param path The path of the value to get
      * @return The map, if available
@@ -458,9 +480,12 @@ public interface DataView {
     /**
      * Gets the {@link Boolean} by path, if available.
      *
-     * <p>If a {@link Boolean} does not exist, or the data residing at
-     * the path is not an instance of a {@link Boolean}, an absent is
-     * returned.</p>
+     * <p>If no value exists at the path, or the value cannot be converted
+     * to a {@link Boolean}, an absent is returned. The value does not have to
+     * be an instance of {@link Boolean}: other values may be converted, and the
+     * conversion may lose information (for example by narrowing a number or
+     * parsing a string). Use {@link #get(DataQuery)} to read the stored value
+     * without conversion.</p>
      *
      * @param path The path of the value to get
      * @return The boolean, if available
@@ -470,9 +495,12 @@ public interface DataView {
     /**
      * Gets the {@link Short} by path, if available.
      *
-     * <p>If a {@link Short} does not exist, or the data residing at
-     * the path is not an instance of a {@link Short}, an absent is
-     * returned.</p>
+     * <p>If no value exists at the path, or the value cannot be converted
+     * to a {@link Short}, an absent is returned. The value does not have to
+     * be an instance of {@link Short}: other values may be converted, and the
+     * conversion may lose information (for example by narrowing a number or
+     * parsing a string). Use {@link #get(DataQuery)} to read the stored value
+     * without conversion.</p>
      *
      * @param path The path of the value to get
      * @return The boolean, if available
@@ -482,9 +510,12 @@ public interface DataView {
     /**
      * Gets the {@link Byte} by path, if available.
      *
-     * <p>If a {@link Byte} does not exist, or the data residing at
-     * the path is not an instance of a {@link Byte}, an absent is
-     * returned.</p>
+     * <p>If no value exists at the path, or the value cannot be converted
+     * to a {@link Byte}, an absent is returned. The value does not have to
+     * be an instance of {@link Byte}: other values may be converted, and the
+     * conversion may lose information (for example by narrowing a number or
+     * parsing a string). Use {@link #get(DataQuery)} to read the stored value
+     * without conversion.</p>
      *
      * @param path The path of the value to get
      * @return The boolean, if available
@@ -494,9 +525,12 @@ public interface DataView {
     /**
      * Gets the {@link Integer} by path, if available.
      *
-     * <p>If a {@link Integer} does not exist, or the data residing at
-     * the path is not an instance of a {@link Integer}, an absent is
-     * returned.</p>
+     * <p>If no value exists at the path, or the value cannot be converted
+     * to a {@link Integer}, an absent is returned. The value does not have to
+     * be an instance of {@link Integer}: other values may be converted, and the
+     * conversion may lose information (for example by narrowing a number or
+     * parsing a string). Use {@link #get(DataQuery)} to read the stored value
+     * without conversion.</p>
      *
      * @param path The path of the value to get
      * @return The integer, if available
@@ -506,9 +540,12 @@ public interface DataView {
     /**
      * Gets the {@link Long} by path, if available.
      *
-     * <p>If a {@link Long} does not exist, or the data residing at
-     * the path is not an instance of a {@link Long}, an absent is
-     * returned.</p>
+     * <p>If no value exists at the path, or the value cannot be converted
+     * to a {@link Long}, an absent is returned. The value does not have to
+     * be an instance of {@link Long}: other values may be converted, and the
+     * conversion may lose information (for example by narrowing a number or
+     * parsing a string). Use {@link #get(DataQuery)} to read the stored value
+     * without conversion.</p>
      *
      * @param path The path of the value to get
      * @return The long, if available
@@ -518,9 +555,12 @@ public interface DataView {
     /**
      * Gets the {@link Float} by path, if available.
      *
-     * <p>If a {@link Float} does not exist, or the data residing at
-     * the path is not an instance of a {@link Float}, an absent is
-     * returned.</p>
+     * <p>If no value exists at the path, or the value cannot be converted
+     * to a {@link Float}, an absent is returned. The value does not have to
+     * be an instance of {@link Float}: other values may be converted, and the
+     * conversion may lose information (for example by narrowing a number or
+     * parsing a string). Use {@link #get(DataQuery)} to read the stored value
+     * without conversion.</p>
      *
      * @param path The path of the value to get
      * @return The boolean, if available
@@ -530,9 +570,12 @@ public interface DataView {
     /**
      * Gets the {@link Double} by path, if available.
      *
-     * <p>If a {@link Double} does not exist, or the data residing at
-     * the path is not an instance of a {@link Double}, an absent is
-     * returned.</p>
+     * <p>If no value exists at the path, or the value cannot be converted
+     * to a {@link Double}, an absent is returned. The value does not have to
+     * be an instance of {@link Double}: other values may be converted, and the
+     * conversion may lose information (for example by narrowing a number or
+     * parsing a string). Use {@link #get(DataQuery)} to read the stored value
+     * without conversion.</p>
      *
      * @param path The path of the value to get
      * @return The double, if available
@@ -542,9 +585,12 @@ public interface DataView {
     /**
      * Gets the {@link String} by path, if available.
      *
-     * <p>If a {@link String} does not exist, or the data residing at
-     * the path is not an instance of a {@link String}, an absent is
-     * returned.</p>
+     * <p>If no value exists at the path, or the value cannot be converted
+     * to a {@link String}, an absent is returned. The value does not have to
+     * be an instance of {@link String}: other values may be converted, and the
+     * conversion may lose information (for example by narrowing a number or
+     * parsing a string). Use {@link #get(DataQuery)} to read the stored value
+     * without conversion.</p>
      *
      * @param path The path of the value to get
      * @return The string, if available
@@ -616,9 +662,10 @@ public interface DataView {
     /**
      * Gets the {@link List} of {@link String} by path, if available.
      *
-     * <p>If a {@link List} of {@link String} does not exist, or the data
-     * residing at the path is not an instance of a {@link List} of
-     * {@link String}, an absent is returned.</p>
+     * <p>If a {@link List} does not exist at the path, an absent is
+     * returned. Elements that cannot be converted to {@link String} are left
+     * out of the returned list instead of causing an absent, so the list
+     * may be shorter than the stored one.</p>
      *
      * @param path The path of the value to get
      * @return The list of strings, if available
@@ -628,9 +675,10 @@ public interface DataView {
     /**
      * Gets the {@link List} of {@link Character} by path, if available.
      *
-     * <p>If a {@link List} of {@link Character} does not exist, or the data
-     * residing at the path is not an instance of a {@link List} of
-     * {@link Character}, an absent is returned.</p>
+     * <p>If a {@link List} does not exist at the path, an absent is
+     * returned. Elements that cannot be converted to {@link Character} are left
+     * out of the returned list instead of causing an absent, so the list
+     * may be shorter than the stored one.</p>
      *
      * @param path The path of the value to get
      * @return The list of characters, if available
@@ -640,9 +688,10 @@ public interface DataView {
     /**
      * Gets the {@link List} of {@link Boolean} by path, if available.
      *
-     * <p>If a {@link List} of {@link Boolean} does not exist, or the data
-     * residing at the path is not an instance of a {@link List} of
-     * {@link Boolean}, an absent is returned.</p>
+     * <p>If a {@link List} does not exist at the path, an absent is
+     * returned. Elements that cannot be converted to {@link Boolean} are left
+     * out of the returned list instead of causing an absent, so the list
+     * may be shorter than the stored one.</p>
      *
      * @param path The path of the value to get
      * @return The list of booleans, if available
@@ -652,9 +701,10 @@ public interface DataView {
     /**
      * Gets the {@link List} of {@link Byte} by path, if available.
      *
-     * <p>If a {@link List} of {@link Byte} does not exist, or the data
-     * residing at the path is not an instance of a {@link List} of
-     * {@link Byte}, an absent is returned.</p>
+     * <p>If a {@link List} does not exist at the path, an absent is
+     * returned. Elements that cannot be converted to {@link Byte} are left
+     * out of the returned list instead of causing an absent, so the list
+     * may be shorter than the stored one.</p>
      *
      * @param path The path of the value to get
      * @return The list of bytes, if available
@@ -664,9 +714,10 @@ public interface DataView {
     /**
      * Gets the {@link List} of {@link Short} by path, if available.
      *
-     * <p>If a {@link List} of {@link Short} does not exist, or the data
-     * residing at the path is not an instance of a {@link List} of
-     * {@link Short}, an absent is returned.</p>
+     * <p>If a {@link List} does not exist at the path, an absent is
+     * returned. Elements that cannot be converted to {@link Short} are left
+     * out of the returned list instead of causing an absent, so the list
+     * may be shorter than the stored one.</p>
      *
      * @param path The path of the value to get
      * @return The list of shorts, if available
@@ -676,9 +727,10 @@ public interface DataView {
     /**
      * Gets the {@link List} of {@link Integer} by path, if available.
      *
-     * <p>If a {@link List} of {@link Integer} does not exist, or the data
-     * residing at the path is not an instance of a {@link List} of
-     * {@link Integer}, an absent is returned.</p>
+     * <p>If a {@link List} does not exist at the path, an absent is
+     * returned. Elements that cannot be converted to {@link Integer} are left
+     * out of the returned list instead of causing an absent, so the list
+     * may be shorter than the stored one.</p>
      *
      * @param path The path of the value to get
      * @return The list of integers, if available
@@ -688,9 +740,10 @@ public interface DataView {
     /**
      * Gets the {@link List} of {@link Long} by path, if available.
      *
-     * <p>If a {@link List} of {@link Long} does not exist, or the data
-     * residing at the path is not an instance of a {@link List} of
-     * {@link Long}, an absent is returned.</p>
+     * <p>If a {@link List} does not exist at the path, an absent is
+     * returned. Elements that cannot be converted to {@link Long} are left
+     * out of the returned list instead of causing an absent, so the list
+     * may be shorter than the stored one.</p>
      *
      * @param path The path of the value to get
      * @return The list of longs, if available
@@ -700,9 +753,10 @@ public interface DataView {
     /**
      * Gets the {@link List} of {@link Float} by path, if available.
      *
-     * <p>If a {@link List} of {@link Float} does not exist, or the data
-     * residing at the path is not an instance of a {@link List} of
-     * {@link Float}, an absent is returned.</p>
+     * <p>If a {@link List} does not exist at the path, an absent is
+     * returned. Elements that cannot be converted to {@link Float} are left
+     * out of the returned list instead of causing an absent, so the list
+     * may be shorter than the stored one.</p>
      *
      * @param path The path of the value to get
      * @return The list of floats, if available
@@ -712,9 +766,10 @@ public interface DataView {
     /**
      * Gets the {@link List} of {@link Double} by path, if available.
      *
-     * <p>If a {@link List} of {@link Double} does not exist, or the data
-     * residing at the path is not an instance of a {@link List} of
-     * {@link Double}, an absent is returned.</p>
+     * <p>If a {@link List} does not exist at the path, an absent is
+     * returned. Elements that cannot be converted to {@link Double} are left
+     * out of the returned list instead of causing an absent, so the list
+     * may be shorter than the stored one.</p>
      *
      * @param path The path of the value to get
      * @return The list of doubles, if available
@@ -724,9 +779,10 @@ public interface DataView {
     /**
      * Gets the {@link List} of {@link Map} by path, if available.
      *
-     * <p>If a {@link List} of {@link Map} does not exist, or the data
-     * residing at the path is not an instance of a {@link List} of
-     * {@link Map}, an absent is returned.</p>
+     * <p>If a {@link List} does not exist at the path, an absent is
+     * returned. Elements that cannot be converted to {@link Map} are left
+     * out of the returned list instead of causing an absent, so the list
+     * may be shorter than the stored one.</p>
      *
      * @param path The path of the value to get
      * @return The list of maps, if available
@@ -736,9 +792,10 @@ public interface DataView {
     /**
      * Gets the {@link List} of {@link DataView} by path, if available.
      *
-     * <p>If a {@link List} of {@link DataView} does not exist, or the data
-     * residing at the path is not an instance of a {@link List} of
-     * {@link DataView}, an absent is returned.</p>
+     * <p>If a {@link List} does not exist at the path, an absent is
+     * returned. Elements that cannot be converted to {@link DataView} are left
+     * out of the returned list instead of causing an absent, so the list
+     * may be shorter than the stored one.</p>
      *
      * @param path The path of the value to get
      * @return The list of data views, if available
@@ -934,7 +991,8 @@ public interface DataView {
          */
         ALL_DATA_CLONED,
         /**
-         * All data added to the container will be cloned for safety.
+         * All data added to the container will be cloned for safety when it
+         * is set. Data read from the container is not cloned again.
          */
         CLONED_ON_SET,
         /**
